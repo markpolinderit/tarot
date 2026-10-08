@@ -118,7 +118,21 @@ textarea{min-height:64px;resize:vertical}
 .bar{display:grid;grid-template-columns:90px 1fr 26px;gap:8px;align-items:center;font-size:.9rem}
 .bar i{display:block;height:10px;border-radius:6px;background:var(--line)}.bar i b{display:block;height:100%;border-radius:6px}
 .warn{color:var(--bad);font-size:.9rem}
-@media print{nav,header,footer,#readingForm,.btnrow{display:none!important}body{background:#fff;color:#000}.panel{border:none}.reading *{color:#000!important}}
+details.aiset{margin-top:18px;border-top:1px solid var(--line);padding-top:12px}
+details.aiset summary{cursor:pointer;font-weight:600;color:var(--gold2)}
+.aigrid{display:grid;grid-template-columns:1fr 220px;gap:10px;margin:10px 0}
+@media(max-width:640px){.aigrid{grid-template-columns:1fr}}
+.aibox{margin-top:28px;border-top:1px solid var(--gold);padding-top:4px}
+.msg{padding:12px 16px;border-radius:12px;margin:12px 0}
+.msg.ai{background:rgba(217,180,90,.07);border:1px solid rgba(217,180,90,.3)}
+.msg.me{background:var(--bg2);border:1px solid var(--line);margin-left:12%}
+.msg h4{color:var(--gold2);margin:12px 0 4px;font-size:1.05rem}
+.msg p{margin:6px 0}.msg ul,.msg ol{margin:6px 0;padding-left:20px}
+.msg.err{border:1px solid var(--bad);background:rgba(228,103,122,.1)}
+.typing::after{content:"▍";animation:blink 1s infinite;color:var(--gold2)}
+@keyframes blink{50%{opacity:0}}
+.aiask{display:flex;gap:8px;margin-top:10px}.aiask input{flex:1;min-width:0}
+@media print{nav,header,footer,#readingForm,.btnrow,#aiStart,#aiAsk{display:none!important}body{background:#fff;color:#000}.panel{border:none}.reading *{color:#000!important}}
 </style>
 </head>
 <body>
@@ -223,6 +237,20 @@ textarea{min-height:64px;resize:vertical}
       <button id="rClear">Leegmaken</button>
     </div>
     <div id="rMsg" class="warn" style="margin-top:10px"></div>
+    <details class="aiset" id="aiSettings">
+      <summary>✨ AI-uitleg instellen <span id="aiBadge" class="muted" style="font-weight:400"></span></summary>
+      <p class="muted" style="font-size:.9rem">Met een eigen <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener">Anthropic API-sleutel</a> schrijft Claude een persoonlijke uitleg bij je lezing, en kun je doorvragen. De sleutel gaat rechtstreeks van jouw browser naar Anthropic en wordt nergens anders opgeslagen. Elke uitleg kost een klein bedrag van je API-tegoed. Op een gedeelde computer: vink "onthouden" uit of klik na afloop op "Vergeet sleutel".</p>
+      <div class="aigrid">
+        <input type="password" id="aiKey" placeholder="sk-ant-…" autocomplete="off" spellcheck="false" aria-label="API-sleutel">
+        <select id="aiModel" aria-label="Model">
+          <option value="claude-sonnet-5-5">Claude Sonnet 5.5 (aanbevolen)</option>
+          <option value="claude-opus-5-5">Claude Opus 5.5 (diepgaandst)</option>
+          <option value="claude-haiku-4-5-20251001">Claude Haiku 4.5 (snelst, goedkoopst)</option>
+        </select>
+      </div>
+      <label class="revlab"><input type="checkbox" id="aiRemember" checked> Sleutel onthouden op dit apparaat</label>
+      <div class="btnrow" style="margin-top:10px"><button id="aiSave" class="primary">Opslaan</button><button id="aiForget">Vergeet sleutel</button><span id="aiStatus" class="muted" style="align-self:center"></span></div>
+    </details>
   </div>
   <div id="readingOut" class="panel reading" style="display:none;margin-top:18px"></div>
 </section>
@@ -830,10 +858,169 @@ function explainReading(){
   h+=`<p class="muted" style="font-size:.85rem">Deze uitleg is automatisch samengesteld uit de traditionele betekenissen. Tarot is een spiegel voor reflectie, geen vaststaande voorspelling. Jouw eigen gevoel bij de kaarten weegt het zwaarst.</p>`;
   h+=`<div class="btnrow"><button onclick="copyReading()">📋 Kopieer tekst</button><button onclick="window.print()">🖨️ Print / PDF</button><button onclick="shareReading()">🔗 Kopieer deellink</button><span id="copyMsg" class="muted" style="align-self:center"></span></div>`;
 
+  h+=`<div class="aibox" id="aiBox"><h3>✨ AI-uitleg</h3><div id="aiMsgs"></div>
+    <div id="aiStart"><p class="muted">Laat Claude deze lezing als geheel uitleggen, afgestemd op je vraag. Daarna kun je doorvragen.</p><button class="primary" onclick="aiStart()">✨ Vraag een persoonlijke AI-uitleg</button></div>
+    <form id="aiAsk" class="aiask" style="display:none" onsubmit="aiFollow(event)"><input type="text" id="aiInput" placeholder="Stel een vervolgvraag over je lezing…" autocomplete="off"><button class="primary" id="aiSend">Verstuur</button></form></div>`;
+
+  // context voor de AI
+  const tmp=document.createElement("div"); tmp.innerHTML=h;
+  tmp.querySelectorAll(".card,.btnrow,.spreadview,.bars,.aibox,.pos-ex,h2").forEach(e=>e.remove());
+  LAST = {
+    q, spread:k==="vrij"?"Vrije legging":SPREADS[k].name,
+    cards:items.map((x,i)=>`${i+1}. ${x.label}${x.hint?` (${x.hint})`:""}: ${x.card.name}${x.rev?" — OMGEKEERD":""} — ${cardMeaning(x.card,x.rev).kw}`).join("\n"),
+    analysis:(on=>[...tmp.querySelectorAll("h3,p,li")].filter(e=>{if(e.tagName==="H3"&&e.textContent!=="Kaart voor kaart")on=true;return on&&!e.getAttribute("style")}))(false).map(e=>(e.tagName==="H3"?"\n## ":e.tagName==="LI"?"- ":"")+e.textContent.replace(/\s+/g," ").trim()).join("\n").trim()
+  };
+  AI.abort && AI.abort.abort(); AI.history=[];
+
   $("#readingOut").innerHTML=h; $("#readingOut").style.display="block";
   window.scrollTo({top:$("#readingOut").offsetTop-70,behavior:"smooth"});
 }
 $("#rExplain").onclick=explainReading;
+
+/* ===================== AI-UITLEG (eigen API-sleutel) ===================== */
+let LAST=null;
+const AI={key:"",model:"claude-sonnet-5-5",history:[],busy:false,abort:null};
+(function initAI(){
+  AI.key = store("tarot-ai-key")||"";
+  AI.model = store("tarot-ai-model")||AI.model;
+  $("#aiKey").value=AI.key; $("#aiModel").value=AI.model;
+  if(!$("#aiModel").value){ $("#aiModel").selectedIndex=0; AI.model=$("#aiModel").value; }
+  aiBadge();
+})();
+function aiBadge(){ $("#aiBadge").textContent = AI.key ? "· ingesteld ✓" : "· optioneel"; }
+$("#aiSave").onclick=()=>{
+  AI.key=$("#aiKey").value.trim(); AI.model=$("#aiModel").value;
+  if($("#aiRemember").checked){ store("tarot-ai-key",AI.key); store("tarot-ai-model",AI.model); }
+  else { try{localStorage.removeItem("tarot-ai-key")}catch(e){} store("tarot-ai-model",AI.model); }
+  $("#aiStatus").textContent = AI.key ? (AI.key.startsWith("sk-ant-")?"Opgeslagen ✓":"Opgeslagen — let op: een Anthropic-sleutel begint meestal met sk-ant-") : "Geen sleutel ingevuld.";
+  aiBadge();
+};
+$("#aiModel").onchange=()=>{AI.model=$("#aiModel").value; store("tarot-ai-model",AI.model)};
+$("#aiForget").onclick=()=>{
+  AI.key=""; $("#aiKey").value=""; try{localStorage.removeItem("tarot-ai-key")}catch(e){}
+  $("#aiStatus").textContent="Sleutel verwijderd uit deze browser."; aiBadge();
+};
+
+const AI_SYSTEM = `Je bent een ervaren, warme en nuchtere tarotlezer die werkt binnen de Rider-Waite-Smith-traditie. Je schrijft in het Nederlands, in de jij-vorm.
+
+Je krijgt een lezing: de vraag, de legging, de kaarten per positie (met kernbetekenis, ook of een kaart omgekeerd ligt) en een automatische analyse van de website (rode draad, verhouding Grote/Kleine Arcana, elementen, numerologie, omgekeerde kaarten, kwintessens).
+
+Werkwijze:
+- Gebruik de analyse van de website als basis en spreek de vaste betekenissen niet tegen; jouw meerwaarde is dat je de kaarten verbindt tot één samenhangend verhaal dat ingaat op de vraag.
+- Bespreek hoe kaarten elkaar beïnvloeden: posities ten opzichte van elkaar, elementen die elkaar versterken of schuren, terugkerende getallen en symbolen uit de afbeeldingen.
+- Behandel tarot als hulpmiddel voor reflectie, niet als vaststaande voorspelling. Jaag geen angst aan: kaarten als De Dood, De Toren of de Tien van Zwaarden leg je uit als transformatie, einde of omslagpunt.
+- Geef bij vragen over gezondheid, geld, juridische zaken of veiligheid geen stellige adviezen; moedig waar passend aan om een deskundige te raadplegen.
+- Als iemand zich in nood lijkt te bevinden, reageer dan met zorg en noem dat hulp beschikbaar is (in Nederland: 113 Zelfmoordpreventie, 0800-0113, of de huisarts).
+- Opmaak: Markdown met korte kopjes (###) en alinea's. Het eerste antwoord is ongeveer 350–550 woorden: kern van de lezing, de kaarten in samenhang, een praktisch advies, en sluit af met één of twee reflectievragen.
+- Vervolgvragen beantwoord je beknopt en concreet, met verwijzing naar de kaarten in deze lezing.`;
+
+function aiContextMessage(){
+  return `Hier is mijn tarotlezing.
+
+Vraag: ${LAST.q || "(geen specifieke vraag — een algemene lezing)"}
+Legging: ${LAST.spread}
+
+Kaarten:
+${LAST.cards}
+
+Automatische analyse van de website:
+${LAST.analysis}
+
+Geef me een persoonlijke uitleg van deze lezing.`;
+}
+
+function esc(t){return t.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
+function md(src){
+  const inline=t=>esc(t).replace(/\*\*(.+?)\*\*/g,"<b>$1</b>").replace(/(^|[^*])\*([^*\n]+)\*/g,"$1<i>$2</i>").replace(/_(\S[^_]*\S)_/g,"<i>$1</i>");
+  let out="", list=null, para=[];
+  const flushP=()=>{if(para.length){out+=`<p>${inline(para.join(" "))}</p>`;para=[]}};
+  const flushL=()=>{if(list){out+=`<${list.t}>${list.items.map(i=>`<li>${inline(i)}</li>`).join("")}</${list.t}>`;list=null}};
+  src.split("\n").forEach(line=>{
+    const l=line.trim(); let m;
+    if(!l){flushP();flushL();return}
+    if(m=l.match(/^#{1,6}\s+(.*)/)){flushP();flushL();out+=`<h4>${inline(m[1])}</h4>`;return}
+    if(/^(-{3,}|\*{3,})$/.test(l)){flushP();flushL();return}
+    if(m=l.match(/^[-*•]\s+(.*)/)){flushP();if(!list||list.t!=="ul"){flushL();list={t:"ul",items:[]}}list.items.push(m[1]);return}
+    if(m=l.match(/^\d+[.)]\s+(.*)/)){flushP();if(!list||list.t!=="ol"){flushL();list={t:"ol",items:[]}}list.items.push(m[1]);return}
+    flushL(); para.push(l);
+  });
+  flushP();flushL(); return out;
+}
+
+function aiAddMsg(cls,html){
+  const d=document.createElement("div"); d.className="msg "+cls; d.innerHTML=html;
+  $("#aiMsgs").appendChild(d); return d;
+}
+function aiErrorText(status,msg){
+  if(status===401) return "De API-sleutel wordt niet geaccepteerd. Controleer de sleutel bij ‘AI-uitleg instellen’.";
+  if(status===403) return "Deze sleutel heeft geen toegang tot dit model. Kies een ander model bij ‘AI-uitleg instellen’.";
+  if(status===404) return "Het gekozen model is niet gevonden. Kies een ander model bij ‘AI-uitleg instellen’.";
+  if(status===429) return "Te veel verzoeken of je limiet is bereikt. Probeer het over een minuut opnieuw.";
+  if(status===400 && /credit|balance/i.test(msg||"")) return "Je API-tegoed is op. Vul het aan in de Anthropic Console.";
+  if(status===529||status>=500) return "Anthropic is op dit moment overbelast of onbereikbaar. Probeer het zo opnieuw.";
+  return "Er ging iets mis"+(msg?": "+msg:".");
+}
+async function aiStream(onText){
+  AI.abort=new AbortController();
+  const res=await fetch("https://api.anthropic.com/v1/messages",{
+    method:"POST", signal:AI.abort.signal,
+    headers:{"content-type":"application/json","x-api-key":AI.key,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},
+    body:JSON.stringify({model:AI.model,max_tokens:2000,system:AI_SYSTEM,messages:AI.history,stream:true})
+  });
+  if(!res.ok){ let m=""; try{const j=await res.json(); m=j.error&&j.error.message}catch(e){} throw new Error(aiErrorText(res.status,m)); }
+  const reader=res.body.getReader(), dec=new TextDecoder(); let buf="", full="";
+  for(;;){
+    const {done,value}=await reader.read(); if(done) break;
+    buf+=dec.decode(value,{stream:true});
+    let i; while((i=buf.indexOf("\n"))>=0){
+      const line=buf.slice(0,i).trim(); buf=buf.slice(i+1);
+      if(!line.startsWith("data:")) continue;
+      let ev; try{ev=JSON.parse(line.slice(5))}catch(e){continue}
+      if(ev.type==="content_block_delta" && ev.delta && ev.delta.type==="text_delta"){ full+=ev.delta.text; onText(full); }
+      else if(ev.type==="error") throw new Error(aiErrorText(529,ev.error&&ev.error.message));
+    }
+  }
+  return full;
+}
+async function aiRun(){
+  AI.busy=true; $("#aiSend")&&($("#aiSend").disabled=true);
+  const box=aiAddMsg("ai typing","");
+  try{
+    const text=await aiStream(t=>{box.innerHTML=md(t)});
+    box.classList.remove("typing");
+    if(!text.trim()) throw new Error("Er kwam geen antwoord terug. Probeer het opnieuw.");
+    AI.history.push({role:"assistant",content:text});
+    $("#aiAsk").style.display="flex";
+  }catch(e){
+    box.className="msg err";
+    box.textContent = e.name==="AbortError" ? "Gestopt." : (e.message==="Failed to fetch" ? "Kon Anthropic niet bereiken. Controleer je internetverbinding." : e.message);
+    AI.history.pop(); // laatste vraag terugnemen zodat je opnieuw kunt proberen
+    if(!AI.history.length) $("#aiStart").style.display="block"; else $("#aiAsk").style.display="flex";
+  }
+  AI.busy=false; $("#aiSend")&&($("#aiSend").disabled=false);
+}
+function aiStart(){
+  if(!LAST) return;
+  if(!AI.key){
+    $("#aiSettings").open=true; $("#aiKey").focus();
+    window.scrollTo({top:$("#aiSettings").getBoundingClientRect().top+scrollY-90,behavior:"smooth"});
+    $("#aiStatus").textContent="Vul eerst je API-sleutel in en klik op Opslaan.";
+    return;
+  }
+  if(AI.busy) return;
+  $("#aiStart").style.display="none";
+  AI.history=[{role:"user",content:aiContextMessage()}];
+  aiRun();
+}
+function aiFollow(e){
+  e.preventDefault();
+  const v=$("#aiInput").value.trim(); if(!v||AI.busy) return;
+  if(!AI.key){aiStart();return}
+  $("#aiInput").value="";
+  aiAddMsg("me",esc(v));
+  AI.history.push({role:"user",content:v});
+  aiRun();
+}
 
 function flash(t){const m=$("#copyMsg");if(m){m.textContent=t;setTimeout(()=>m.textContent="",2500)}}
 function copyText(t,msg){
@@ -841,7 +1028,7 @@ function copyText(t,msg){
   else { const a=document.createElement("textarea");a.value=t;document.body.appendChild(a);a.select();try{document.execCommand("copy");flash(msg)}catch(e){};a.remove(); }
 }
 function copyReading(){
-  const clone=$("#readingOut").cloneNode(true); clone.querySelectorAll(".card,.btnrow,.spreadview,.bars").forEach(e=>e.remove());
+  const clone=$("#readingOut").cloneNode(true); clone.querySelectorAll(".card,.btnrow,.spreadview,.bars,#aiStart,#aiAsk").forEach(e=>e.remove());
   copyText(clone.innerText.replace(/\n{3,}/g,"\n\n").trim(),"Tekst gekopieerd ✓");
 }
 function shareReading(){
