@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tarot Leren</title>
+<meta name="description" content="Leer de 78 tarotkaarten kennen met een interactieve test, numerologie en symboliek.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#14102a; --bg2:#1d1838; --panel:#241e45; --line:#3a3266;
+  --text:#ece7f7; --muted:#a99fc9; --gold:#d9b45a; --gold2:#f1d48a;
+  --ok:#5cc495; --bad:#e4677a;
+  --vuur:#e0703a; --water:#4a9fd8; --lucht:#c9c4e6; --aarde:#7fb85a;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:radial-gradient(ellipse at top,#2a2152 0%,var(--bg) 60%) fixed;color:var(--text);font-family:Inter,system-ui,sans-serif;line-height:1.55;min-height:100vh}
+h1,h2,h3{font-family:"Cormorant Garamond",Georgia,serif;font-weight:700;letter-spacing:.02em;margin:.2em 0 .4em}
+h1{font-size:2.3rem;color:var(--gold2)}
+h2{font-size:1.8rem;color:var(--gold2)}
+h3{font-size:1.35rem}
+a{color:var(--gold2)}
+.wrap{max-width:1100px;margin:0 auto;padding:0 16px}
+header{padding:28px 0 8px;text-align:center}
+header p{color:var(--muted);margin:0 auto;max-width:640px}
+nav{position:sticky;top:0;z-index:20;background:rgba(20,16,42,.92);backdrop-filter:blur(6px);border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;gap:6px;overflow-x:auto;padding-top:10px;padding-bottom:10px}
+nav button{flex:0 0 auto}
+button,.btn{font:inherit;cursor:pointer;border:1px solid var(--line);background:var(--panel);color:var(--text);padding:9px 16px;border-radius:999px;transition:.15s}
+button:hover{border-color:var(--gold)}
+button.active,.primary{background:linear-gradient(135deg,var(--gold),#b8893a);color:#1a1430;border-color:transparent;font-weight:600}
+button:disabled{opacity:.5;cursor:default}
+section.page{display:none;padding:24px 0 60px}
+section.page.show{display:block}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px}
+.muted{color:var(--muted)}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 18px}
+.tabs button{padding:6px 14px;font-size:.92rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:14px}
+
+/* kaart */
+.card{position:relative;aspect-ratio:7/12;border-radius:12px;background:linear-gradient(160deg,#2f2760,#1b1636);border:1.5px solid var(--gold);box-shadow:0 0 0 4px #1b1636 inset,0 0 0 5px rgba(217,180,90,.45) inset,0 6px 18px rgba(0,0,0,.4);display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:12px 6px;text-align:center;cursor:pointer;transition:transform .15s;color:var(--text)}
+.card:hover{transform:translateY(-3px)}
+.card .num{font-family:"Cormorant Garamond",serif;font-weight:700;color:var(--gold2);font-size:1.1rem}
+.card .glyph{font-size:2.6rem;line-height:1;color:var(--gold2);font-family:"Segoe UI Symbol","Noto Sans Symbols","DejaVu Sans",sans-serif}
+.card .glyph svg{width:46px;height:46px}
+.card .nm{font-family:"Cormorant Garamond",serif;font-weight:600;font-size:1rem;line-height:1.15}
+.card.big{width:170px;cursor:default;margin:0 auto}
+.card.big .glyph{font-size:3.6rem}.card.big .glyph svg{width:64px;height:64px}
+.card.big .nm{font-size:1.2rem}
+.s-staven{--sc:var(--vuur)}.s-bekers{--sc:var(--water)}.s-zwaarden{--sc:var(--lucht)}.s-pentakels{--sc:var(--aarde)}
+.card[class*="s-"] .glyph{color:var(--sc)}
+.card[class*="s-"]{border-color:var(--sc)}
+
+/* modal */
+.modal{position:fixed;inset:0;background:rgba(8,6,20,.75);display:none;align-items:flex-start;justify-content:center;z-index:50;overflow-y:auto;padding:30px 16px}
+.modal.show{display:flex}
+.modal .box{background:var(--bg2);border:1px solid var(--gold);border-radius:18px;max-width:720px;width:100%;padding:24px;position:relative}
+.close{position:absolute;top:12px;right:12px;padding:4px 12px}
+.detail{display:grid;grid-template-columns:180px 1fr;gap:22px}
+@media(max-width:600px){.detail{grid-template-columns:1fr}}
+.tag{display:inline-block;font-size:.8rem;padding:3px 10px;border-radius:999px;background:rgba(217,180,90,.15);color:var(--gold2);margin:0 4px 4px 0}
+dl{margin:0}dt{font-weight:600;color:var(--gold2);margin-top:8px}dd{margin:2px 0 0}
+ul.sym{padding-left:18px;margin:6px 0}ul.sym li{margin:3px 0}
+
+/* quiz */
+.quiz-setup label{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;border-radius:10px;cursor:pointer}
+.quiz-setup label:hover{background:rgba(255,255,255,.04)}
+.opts{display:grid;gap:10px;margin:16px 0}
+.opt{text-align:left;border-radius:12px;padding:12px 16px;background:var(--bg2)}
+.opt.correct{border-color:var(--ok);background:rgba(92,196,149,.15)}
+.opt.wrong{border-color:var(--bad);background:rgba(228,103,122,.15)}
+.progress{height:6px;background:var(--line);border-radius:6px;overflow:hidden;margin:8px 0 18px}
+.progress div{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold2));transition:width .3s}
+.qhead{display:flex;justify-content:space-between;color:var(--muted);font-size:.9rem}
+.qtext{font-family:"Cormorant Garamond",serif;font-size:1.6rem;font-weight:600;line-height:1.25}
+.qcard{float:right;width:96px;margin:0 0 10px 14px}
+.qcard .card{cursor:default}.qcard .card .glyph{font-size:2rem}.qcard .card .nm{font-size:.85rem}
+.explain{border-left:3px solid var(--gold);padding:8px 14px;background:rgba(217,180,90,.07);border-radius:0 10px 10px 0;margin-top:6px}
+.score{font-family:"Cormorant Garamond",serif;font-size:3.4rem;color:var(--gold2);font-weight:700}
+.mist{border-top:1px solid var(--line);padding:10px 0}
+table{width:100%;border-collapse:collapse}
+th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--gold2);font-weight:600}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.row7{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 16px}
+.row7 .card{width:74px;padding:6px 3px}.row7 .card .glyph{font-size:1.5rem}.row7 .card .nm{font-size:.72rem}.row7 .card .num{font-size:.85rem}
+input[type=date],select{font:inherit;background:var(--bg2);color:var(--text);border:1px solid var(--line);border-radius:10px;padding:9px 12px;color-scheme:dark}
+.chain{font-family:"Cormorant Garamond",serif;font-size:1.4rem;color:var(--gold2)}
+footer{text-align:center;color:var(--muted);font-size:.85rem;padding:20px 0 40px}
+.stats{display:flex;gap:18px;flex-wrap:wrap;margin-top:10px}
+.stats div{background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:10px 16px}
+.stats b{display:block;font-size:1.4rem;color:var(--gold2)}
+</style>
+</head>
+<body>
+<header class="wrap">
+  <h1>✦ Tarot Leren ✦</h1>
+  <p>Leer de 78 kaarten kennen: hun betekenis, symbolen, getallen en elementen — en test jezelf.</p>
+</header>
+<nav><div class="wrap">
+  <button data-page="test" class="active">🎴 Test</button>
+  <button data-page="leren">📖 Kaarten</button>
+  <button data-page="num">🔢 Numerologie</button>
+  <button data-page="sym">✶ Symboliek & elementen</button>
+  <button data-page="geboorte">🌙 Geboortekaart</button>
+</div></nav>
+
+<main class="wrap">
+<!-- TEST -->
+<section class="page show" id="test">
+  <div id="quizSetup" class="panel quiz-setup">
+    <h2>Test je kennis</h2>
+    <p class="muted">Kies onderwerpen en lengte. Kaarten die je fout beantwoordt komen vaker terug.</p>
+    <div class="cols">
+      <div>
+        <label><input type="checkbox" value="major" checked> <span><b>Grote Arcana</b><br><span class="muted">betekenissen van de 22 trumpkaarten</span></span></label>
+        <label><input type="checkbox" value="minor" checked> <span><b>Kleine Arcana</b><br><span class="muted">Aas t/m 10 van de vier kleuren</span></span></label>
+        <label><input type="checkbox" value="court"> <span><b>Hofkaarten</b><br><span class="muted">Schildknaap, Ridder, Koningin, Koning</span></span></label>
+      </div>
+      <div>
+        <label><input type="checkbox" value="symbol" checked> <span><b>Symboliek</b><br><span class="muted">beelden, kleuren en hun betekenis</span></span></label>
+        <label><input type="checkbox" value="numero" checked> <span><b>Numerologie</b><br><span class="muted">getallen, reductie en rangorde</span></span></label>
+        <label><input type="checkbox" value="element"> <span><b>Elementen & astrologie</b><br><span class="muted">vuur, water, lucht, aarde en tekens</span></span></label>
+      </div>
+    </div>
+    <p style="margin-top:14px">Aantal vragen:
+      <select id="qLen"><option>10</option><option selected>20</option><option>30</option><option>50</option></select>
+      &nbsp;<button class="primary" id="startQuiz">Start de test</button>
+    </p>
+    <div class="stats" id="statBox"></div>
+  </div>
+  <div id="quizRun" class="panel" style="display:none"></div>
+</section>
+
+<!-- LEREN -->
+<section class="page" id="leren">
+  <h2>De 78 kaarten</h2>
+  <p class="muted">Tik op een kaart voor betekenis, symbolen en numerologie.</p>
+  <div class="tabs" id="deckTabs">
+    <button data-f="major" class="active">Grote Arcana</button>
+    <button data-f="staven">Staven</button>
+    <button data-f="bekers">Bekers</button>
+    <button data-f="zwaarden">Zwaarden</button>
+    <button data-f="pentakels">Pentakels</button>
+  </div>
+  <div id="deckIntro" class="muted" style="margin-bottom:14px"></div>
+  <div class="grid" id="deckGrid"></div>
+</section>
+
+<!-- NUMEROLOGIE -->
+<section class="page" id="num">
+  <h2>Numerologie in de tarot</h2>
+  <p>Elk getal heeft een eigen energie. In de Kleine Arcana vertelt het <b>getal</b> je <i>wat</i> er gebeurt, de <b>kleur</b> (het element) vertelt <i>waar</i> het speelt. Een Vijf is altijd een moment van onrust — bij Bekers in je gevoel, bij Pentakels in je financiën.</p>
+  <div class="panel" style="margin:18px 0"><table id="numTable"></table></div>
+  <h3>De Narrenreis: drie rijen van zeven</h3>
+  <p class="muted">De Dwaas (0) reist door de Grote Arcana. Leg je kaart I t/m XXI in drie rijen, dan zie je drie fasen van groei.</p>
+  <div id="rows7"></div>
+  <h3>Reductie: verwante kaarten</h3>
+  <p class="muted">Tel de cijfers van een kaartnummer op (theosofische reductie) en je vindt de "wortel". Zo is De Toren (16 → 1+6 = 7) een hogere octaaf van De Zegewagen (7): waar de wagen bouwt met wilskracht, breekt de toren af wat niet klopt.</p>
+  <div class="panel" id="reduct"></div>
+</section>
+
+<!-- SYMBOLIEK -->
+<section class="page" id="sym">
+  <h2>Symboliek & elementen</h2>
+  <h3>De vier kleuren</h3>
+  <div class="cols" id="suitInfo"></div>
+  <h3 style="margin-top:24px">Hofkaarten</h3>
+  <p class="muted">Elke rang heeft (in de Golden Dawn-traditie) een eigen element. Een hofkaart combineert dat met het element van de kleur: de Koningin van Staven is "water van vuur" — warme, gevoelde passie.</p>
+  <div class="panel"><table id="courtTable"></table></div>
+  <h3 style="margin-top:24px">Kleuren in de afbeeldingen</h3>
+  <div class="panel"><table id="colorTable"></table></div>
+  <h3 style="margin-top:24px">Terugkerende symbolen</h3>
+  <div class="panel"><table id="symTable"></table></div>
+</section>
+
+<!-- GEBOORTEKAART -->
+<section class="page" id="geboorte">
+  <h2>Jouw geboortekaart</h2>
+  <p>Tel dag, maand en jaar van je geboortedatum op, en tel daarna de cijfers van de uitkomst bij elkaar tot je op 22 of lager uitkomt. Dat is je <b>persoonlijkheidskaart</b>; reduceer je verder tot één cijfer, dan vind je je <b>zielskaart</b>.</p>
+  <div class="panel">
+    <input type="date" id="bdate"> <button class="primary" id="calcBirth">Bereken</button>
+    <div id="birthOut" style="margin-top:18px"></div>
+  </div>
+</section>
+</main>
+
+<div class="modal" id="modal"><div class="box"><button class="close" onclick="closeModal()">✕</button><div id="modalBody"></div></div></div>
+
+<footer>Kaartbeschrijvingen volgen de Rider-Waite-Smith-traditie. Tarot is een hulpmiddel voor reflectie, geen voorspelling.</footer>
+
+<script>
+/* ===================== DATA ===================== */
+const VS = "\uFE0E"; // tekstweergave i.p.v. emoji
+const ROMAN = ["0","I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII","XIII","XIV","XV","XVI","XVII","XVIII","XIX","XX","XXI"];
+
+const MAJOR = [
+ {n:0,name:"De Dwaas",en:"The Fool",astro:"♅",astroName:"Uranus · Lucht",kw:"nieuw begin, spontaniteit, vertrouwen",up:"Een sprong in het onbekende met een open hart. Onbevangen beginnen, zonder garanties.",rev:"Roekeloosheid, naïviteit, angst om de sprong te wagen.",sym:[["Witte roos","zuiverheid en onschuld"],["De afgrond","de sprong in het onbekende"],["Het hondje","instinct en trouw, dat waarschuwt"],["Het bundeltje","onbenutte ervaring en mogelijkheden"]]},
+ {n:1,name:"De Magiër",en:"The Magician",astro:"☿",astroName:"Mercurius",kw:"wilskracht, manifestatie, vaardigheid",up:"Je hebt alle middelen in handen om je plan te realiseren. Focus en wil maken het waar.",rev:"Manipulatie, onbenut talent, misleiding.",sym:[["Lemniscaat (∞) boven het hoofd","oneindige mogelijkheden en wilskracht"],["Eén hand omhoog, één omlaag","'zo boven, zo beneden': hemel en aarde verbinden"],["Staf, beker, zwaard en pentakel op tafel","alle vier de elementen staan tot zijn beschikking"]]},
+ {n:2,name:"De Hogepriesteres",en:"The High Priestess",astro:"☽",astroName:"Maan",kw:"intuïtie, innerlijk weten, mysterie",up:"Luister naar je innerlijke stem. Het antwoord ligt niet buiten je, maar in stilte.",rev:"Geheimen, genegeerde intuïtie, afgesneden van je gevoel.",sym:[["Zwarte en witte pilaar (B en J)","dualiteit: Boaz en Jachin uit de tempel van Salomo"],["Maansikkel aan haar voeten","het onbewuste, cycli en het vrouwelijke"],["Granaatappels op het voorhang","vruchtbaarheid en verborgen kennis"],["Half verborgen boekrol (TORA)","heilige kennis die niet volledig getoond wordt"]]},
+ {n:3,name:"De Keizerin",en:"The Empress",astro:"♀",astroName:"Venus",kw:"vruchtbaarheid, overvloed, natuur",up:"Groei, zorg en creativiteit. Zaaien en laten bloeien; genieten van zintuiglijkheid.",rev:"Creatieve blokkade, afhankelijkheid, verwaarlozing van jezelf.",sym:[["Venussymbool op het hart-schild","liefde, schoonheid, het vrouwelijke"],["Rijp korenveld","overvloed en oogst"],["Kroon met twaalf sterren","de twaalf maanden / tekens van de dierenriem"]]},
+ {n:4,name:"De Keizer",en:"The Emperor",astro:"♈",astroName:"Ram",kw:"structuur, gezag, stabiliteit",up:"Orde scheppen, verantwoordelijkheid nemen, grenzen stellen. Een stevig fundament.",rev:"Dominantie, starheid, gebrek aan discipline.",sym:[["Ramskoppen op de troon","het teken Ram: initiatief en daadkracht"],["Stenen troon","onwrikbaarheid en duurzaamheid"],["Kale bergen","vastberadenheid, weinig ruimte voor gevoel"],["Ankh-scepter","heerschappij over het leven"]]},
+ {n:5,name:"De Hiërofant",en:"The Hierophant",astro:"♉",astroName:"Stier",kw:"traditie, onderricht, instituties",up:"Leren binnen een traditie of van een leraar. Gedeelde waarden, rituelen en conventies.",rev:"Rebellie tegen regels, dogma, je eigen weg zoeken.",sym:[["Twee gekruiste sleutels","toegang tot bewuste en verborgen kennis"],["Twee volgelingen aan zijn voeten","overdracht van kennis van leraar op leerling"],["Drievoudige kroon","heerschappij over drie werelden"]]},
+ {n:6,name:"De Geliefden",en:"The Lovers",astro:"♊",astroName:"Tweelingen",kw:"liefde, keuze, harmonie",up:"Een verbinding vanuit het hart, of een belangrijke keuze die in lijn is met je waarden.",rev:"Disharmonie, verkeerde keuze, uit balans in relaties.",sym:[["Engel Rafaël boven het paar","zegen en heling"],["Boom met slang achter de vrouw","verleiding: de boom van kennis"],["Boom met twaalf vlammen achter de man","passie en de twaalf tekens"]]},
+ {n:7,name:"De Zegewagen",en:"The Chariot",astro:"♋",astroName:"Kreeft",kw:"wilskracht, overwinning, richting",up:"Doorzetten en tegengestelde krachten bundelen om je doel te bereiken.",rev:"Richtingloosheid, controle verliezen, agressie.",sym:[["Zwarte en witte sfinx","tegengestelde krachten die gestuurd moeten worden"],["Geen teugels","sturen met pure wilskracht"],["Sterrenbaldakijn","hemelse bescherming"]]},
+ {n:8,name:"Kracht",en:"Strength",astro:"♌",astroName:"Leeuw",kw:"moed, zachte kracht, geduld",up:"Innerlijke kracht, mededogen en zelfbeheersing. Je temt je driften met liefde, niet met geweld.",rev:"Twijfel aan jezelf, zwakte, rauwe emoties.",sym:[["Vrouw die de bek van de leeuw sluit","zachtheid die rauwe instincten temt"],["Lemniscaat (∞)","oneindige innerlijke kracht"],["Bloemenkrans","natuurlijke, zachte macht"]]},
+ {n:9,name:"De Kluizenaar",en:"The Hermit",astro:"♍",astroName:"Maagd",kw:"introspectie, innerlijke wijsheid, eenzaamheid",up:"Je terugtrekken om naar binnen te kijken. Je eigen licht zijn.",rev:"Isolement, eenzaamheid, terugtrekking uit angst.",sym:[["Lantaarn met zespuntige ster","het licht van wijsheid (zegel van Salomo)"],["Bergtop","bereikte spirituele hoogte"],["Staf","steun en geduld op het pad"]]},
+ {n:10,name:"Het Rad van Fortuin",en:"Wheel of Fortune",astro:"♃",astroName:"Jupiter",kw:"cycli, lot, keerpunt",up:"Het leven draait. Een kentering, geluk, karma — wat omhoog gaat komt omlaag en omgekeerd.",rev:"Pech, weerstand tegen verandering, vastzitten in een cyclus.",sym:[["Vier gevleugelde wezens in de hoeken","de vaste tekens: Stier, Leeuw, Schorpioen, Waterman"],["Letters TARO / ROTA","het rad: tarot, wet, draaiing"],["Sfinx, slang en Anubis","wijsheid, afdaling en opgang"]]},
+ {n:11,name:"Gerechtigheid",en:"Justice",astro:"♎",astroName:"Weegschaal",kw:"waarheid, eerlijkheid, oorzaak en gevolg",up:"Een eerlijke uitkomst. Verantwoordelijkheid nemen voor je daden.",rev:"Oneerlijkheid, ontwijken van verantwoordelijkheid.",sym:[["Weegschaal","afwegen en balans"],["Rechtopstaand tweesnijdend zwaard","heldere, onpartijdige beslissing"],["Witte schoen die onder het gewaad uitsteekt","daden hebben gevolgen"]]},
+ {n:12,name:"De Gehangene",en:"The Hanged Man",astro:"♆",astroName:"Neptunus · Water",kw:"overgave, nieuw perspectief, pauze",up:"Loslaten en de situatie vanuit een ander perspectief bekijken. Bewust stilstaan.",rev:"Stagnatie, uitstel, nutteloze opoffering.",sym:[["Ondersteboven hangend","de wereld omgekeerd bekijken"],["Aureool om het hoofd","verlichting door overgave"],["Benen in de vorm van een 4","stabiliteit, ook in stilstand"]]},
+ {n:13,name:"De Dood",en:"Death",astro:"♏",astroName:"Schorpioen",kw:"transformatie, einde, overgang",up:"Iets eindigt zodat iets nieuws kan beginnen. Zelden letterlijk: een fase sluit af.",rev:"Weerstand tegen verandering, vasthouden.",sym:[["Zwarte vlag met witte roos","leven en zuiverheid na de dood"],["Opkomende zon tussen twee torens","wedergeboorte en onsterfelijkheid"],["Wit paard","zuiverheid van de transformatie"]]},
+ {n:14,name:"Gematigdheid",en:"Temperance",astro:"♐",astroName:"Boogschutter",kw:"balans, matiging, geduld",up:"De middenweg. Tegenstellingen mengen tot iets nieuws; geduld en harmonie.",rev:"Onbalans, overdaad, ongeduld.",sym:[["Water dat tussen twee bekers stroomt","het mengen van tegenstellingen"],["Eén voet in het water, één op land","balans tussen gevoel en materie"],["Driehoek in een vierkant op de borst","geest in materie"]]},
+ {n:15,name:"De Duivel",en:"The Devil",astro:"♑",astroName:"Steenbok",kw:"gebondenheid, verslaving, materialisme",up:"Vastzitten in patronen, verlangens of afhankelijkheden — vaak vrijwillig.",rev:"Bevrijding, ketens doorbreken, inzicht.",sym:[["Losse kettingen om de nek","je zit vast, maar kunt jezelf bevrijden"],["Omgekeerd pentagram","materie boven geest"],["Man en vrouw met staarten","het dierlijke in de mens; schaduw van De Geliefden"]]},
+ {n:16,name:"De Toren",en:"The Tower",astro:"♂",astroName:"Mars",kw:"omwenteling, openbaring, ineenstorting",up:"Plotselinge verandering die valse structuren afbreekt. Schokkend, maar bevrijdend.",rev:"Een ramp afwenden, angst voor verandering.",sym:[["Bliksem","plotselinge goddelijke openbaring"],["Kroon die van de toren valt","ego en valse zekerheden storten in"],["Vallende figuren","onvrijwillige verandering"]]},
+ {n:17,name:"De Ster",en:"The Star",astro:"♒",astroName:"Waterman",kw:"hoop, inspiratie, heling",up:"Na de storm: rust, vertrouwen en vernieuwing. Je bent op de goede weg.",rev:"Wanhoop, gebrek aan geloof, ontmoediging.",sym:[["Achtpuntige ster met zeven kleinere","hoop en leiding; de chakra's"],["Water op land en in de vijver","voeding van bewust en onbewust"],["Ibis in de boom","wijsheid (Thoth)"]]},
+ {n:18,name:"De Maan",en:"The Moon",astro:"♓",astroName:"Vissen",kw:"illusie, angst, onderbewuste",up:"Niet alles is wat het lijkt. Dromen, intuïtie en onzekerheid; vertrouw op je gevoel.",rev:"Verwarring die oplost, angsten onder ogen zien.",sym:[["Hond en wolf","het getemde en het wilde in ons"],["Kreeft die uit het water kruipt","het onbewuste dat opkomt"],["Kronkelend pad tussen twee torens","de onzekere weg naar het onbekende"]]},
+ {n:19,name:"De Zon",en:"The Sun",astro:"☉",astroName:"Zon",kw:"vreugde, succes, vitaliteit",up:"Licht, warmte, helderheid en succes. Een van de meest positieve kaarten.",rev:"Tijdelijke tegenslag, overdreven optimisme.",sym:[["Naakt kind op een wit paard","onschuld en zuivere vreugde"],["Zonnebloemen","groei naar het licht"],["Rode vlag","levenskracht en vitaliteit"]]},
+ {n:20,name:"Het Oordeel",en:"Judgement",astro:"♇",astroName:"Pluto · Vuur",kw:"wedergeboorte, roeping, afrekening",up:"Een innerlijke roep. Afsluiten, vergeven en opstaan in een nieuwe versie van jezelf.",rev:"Zelftwijfel, de roep negeren, harde zelfkritiek.",sym:[["Engel Gabriël met trompet","de roep tot ontwaken"],["Mensen die uit kisten opstaan","wedergeboorte en vernieuwing"],["Vlag met rood kruis","het samenkomen van tegenstellingen"]]},
+ {n:21,name:"De Wereld",en:"The World",astro:"♄",astroName:"Saturnus",kw:"voltooiing, integratie, vervulling",up:"Een cyclus is rond. Heelheid, succes en klaar zijn voor een volgende reis.",rev:"Onvoltooide zaken, geen afsluiting kunnen vinden.",sym:[["Ovale lauwerkrans","overwinning en een voltooide cyclus"],["Dansende figuur met twee staven","balans tussen tegenstellingen in beweging"],["Vier wezens in de hoeken","de vier elementen in harmonie"]]}
+];
+
+const NUM = {
+ 0:{t:"Potentieel",d:"het onbekende, het onbeschreven blad, alles is mogelijk"},
+ 1:{t:"Begin",d:"wil, initiatief, eenheid, het zaadje"},
+ 2:{t:"Dualiteit",d:"balans, partnerschap, keuze, wachten"},
+ 3:{t:"Groei",d:"creatie, expressie, samenwerking, eerste resultaat"},
+ 4:{t:"Stabiliteit",d:"structuur, fundament, veiligheid (risico: stilstand)"},
+ 5:{t:"Verandering",d:"conflict, uitdaging, instabiliteit, verlies"},
+ 6:{t:"Harmonie",d:"herstel, liefde, geven en ontvangen"},
+ 7:{t:"Reflectie",d:"beproeving, evaluatie, spirituele zoektocht"},
+ 8:{t:"Kracht",d:"beweging, meesterschap, ritme, actie"},
+ 9:{t:"Hoogtepunt",d:"bijna voltooid, wijsheid, intensiteit"},
+ 10:{t:"Voltooiing",d:"einde van een cyclus, overgang naar iets nieuws"}
+};
+
+const SUITS = {
+ staven:{name:"Staven",el:"Vuur",signs:"Ram, Leeuw, Boogschutter",theme:"passie, wilskracht, creativiteit, ambitie, actie",cards:"Klaveren"},
+ bekers:{name:"Bekers",el:"Water",signs:"Kreeft, Schorpioen, Vissen",theme:"gevoel, relaties, intuïtie, liefde, verbeelding",cards:"Harten"},
+ zwaarden:{name:"Zwaarden",el:"Lucht",signs:"Tweelingen, Weegschaal, Waterman",theme:"denken, communicatie, waarheid, conflict, beslissingen",cards:"Schoppen"},
+ pentakels:{name:"Pentakels",el:"Aarde",signs:"Stier, Maagd, Steenbok",theme:"geld, werk, lichaam, gezondheid, het materiële",cards:"Ruiten"}
+};
+
+const MINOR = {
+ staven:["inspiratie, een nieuw creatief idee","plannen maken, vooruitkijken","uitbreiding, de eerste schepen komen binnen","viering, thuiskomen, mijlpaal","competitie, onenigheid, wrijving","overwinning, publieke erkenning","standhouden, jezelf verdedigen","snelheid, snelle ontwikkelingen, berichten","veerkracht, laatste krachtsinspanning","last, overbelasting, te veel op je nemen"],
+ bekers:["nieuwe liefde, emotionele overvloed","verbinding, partnerschap, wederzijdse aantrekking","vriendschap, samen vieren","apathie, verveling, een aanbod niet zien","verlies, rouw, spijt","nostalgie, jeugdherinneringen, onschuld","illusies, dagdromen, te veel keuzes","weggaan, iets achterlaten dat niet meer voedt","wensvervulling, tevredenheid","emotionele vervulling, harmonie in het gezin"],
+ zwaarden:["helderheid, doorbraak, waarheid","besluiteloosheid, patstelling, ontkenning","hartzeer, verdriet, pijnlijke waarheid","rust, herstel, contemplatie","conflict, winnen ten koste van anderen","overgang, verder trekken naar rustiger water","list, misleiding, stiekem handelen","je gevangen voelen, zelfopgelegde beperking","angst, piekeren, slapeloze nachten","pijnlijk einde, dieptepunt, het kan niet erger"],
+ pentakels:["nieuwe financiële kans, manifestatie","jongleren, prioriteiten in balans houden","samenwerking, vakmanschap, teamwerk","vasthouden, zekerheid, gierigheid","armoede, uitsluiting, tegenslag","vrijgevigheid, geven en ontvangen","geduld, investering, de oogst afwachten","toewijding, een vak leren, oefenen","onafhankelijkheid, zelfgemaakte luxe","rijkdom, erfenis, familie, blijvend succes"]
+};
+
+const MINSYM = {
+ "staven-3":"Een figuur kijkt vanaf een klif naar schepen op zee.",
+ "staven-10":"Een figuur sjouwt gebogen tien staven naar een stad.",
+ "staven-6":"Een ruiter met een lauwerkrans rijdt door een juichende menigte.",
+ "bekers-5":"Een figuur in een zwarte mantel staart naar drie omgevallen bekers; twee staan nog achter hem.",
+ "bekers-8":"Een figuur loopt onder de maan weg van acht gestapelde bekers.",
+ "bekers-4":"Een figuur zit onder een boom met gekruiste armen; een hand uit een wolk biedt een vierde beker aan.",
+ "bekers-7":"Zeven bekers in de wolken vol fantasieën: juwelen, een kasteel, een draak.",
+ "zwaarden-3":"Drie zwaarden doorboren een rood hart onder regenwolken.",
+ "zwaarden-9":"Een figuur zit rechtop in bed met het gezicht in de handen; negen zwaarden aan de muur.",
+ "zwaarden-10":"Een figuur ligt voorover met tien zwaarden in de rug; aan de horizon breekt het licht door.",
+ "zwaarden-8":"Een geblinddoekte, vastgebonden figuur staat tussen acht zwaarden.",
+ "zwaarden-2":"Een geblinddoekte figuur houdt twee zwaarden gekruist voor de borst.",
+ "pentakels-4":"Een figuur klemt een pentakel vast; één onder elke voet en één op de kroon.",
+ "pentakels-5":"Twee armoedige figuren lopen door de sneeuw langs een verlicht kerkraam.",
+ "pentakels-8":"Een ambachtsman graveert geconcentreerd pentakels.",
+ "pentakels-2":"Een figuur jongleert met twee pentakels in een lemniscaat; schepen op golven erachter."
+};
+
+const COURT = {
+ S:{name:"Schildknaap",short:"Sk",el:"Aarde",role:"leerling, nieuwsgierigheid, een boodschap — het begin van de energie"},
+ R:{name:"Ridder",short:"R",el:"Vuur",role:"actie, beweging — de energie op zijn uiterst, soms doorgeschoten"},
+ Q:{name:"Koningin",short:"Kn",el:"Water",role:"innerlijk meesterschap — de energie gevoeld, verzorgd en belichaamd"},
+ K:{name:"Koning",short:"K",el:"Lucht",role:"uiterlijk meesterschap — de energie beheerst, gestuurd en gedeeld"}
+};
+const COURTM = {
+ staven:{S:"enthousiaste ontdekker, een vurig nieuw idee",R:"avontuurlijk, impulsief, vol vuur",Q:"zelfverzekerd, warm, charismatisch",K:"visionaire leider, ondernemer"},
+ bekers:{S:"dromerig, gevoelig, een creatieve boodschap",R:"romanticus die zijn hart volgt, een aanbod",Q:"empathisch, intuïtief, zorgzaam",K:"emotioneel evenwichtig, diplomatiek, wijs"},
+ zwaarden:{S:"nieuwsgierige denker, waakzaam en alert",R:"snel, direct, doortastend (soms bot)",Q:"helder, onafhankelijk, eerlijk",K:"intellectuele autoriteit, rechtvaardig, analytisch"},
+ pentakels:{S:"leergierig, praktisch, een nieuwe studie",R:"betrouwbaar, geduldig, harde werker",Q:"nuchter, gul, praktisch zorgzaam",K:"welvarend, zeker, zakelijk succesvol"}
+};
+
+const COLORS = [
+ ["Wit","zuiverheid, onschuld, spiritualiteit","De Dwaas (witte roos), De Dood (wit paard)"],
+ ["Rood","passie, wilskracht, levensenergie","De Magiër (rode mantel), De Zon (rode vlag)"],
+ ["Geel","bewustzijn, intellect, optimisme","achtergrond van De Magiër, De Keizerin, Kracht"],
+ ["Blauw","intuïtie, kalmte, het onbewuste","gewaad van De Hogepriesteres"],
+ ["Zwart","mysterie, het onbekende, beperking","De Duivel, de zwarte pilaar"],
+ ["Groen","groei, natuur, vruchtbaarheid","De Keizerin, De Geliefden"],
+ ["Grijs","neutraliteit, wijsheid, onduidelijkheid","De Kluizenaar, Twee van Zwaarden"],
+ ["Paars","spirituele autoriteit, wijsheid","kleding van keizers en koningen"]
+];
+
+const SYMBOLS = [
+ ["Water","emoties, het onbewuste, intuïtie"],["Bergen","uitdagingen, bereikte hoogte, stabiliteit"],
+ ["Pilaren","dualiteit, de poort naar kennis"],["Lemniscaat (∞)","oneindigheid, eeuwige energie"],
+ ["Engel","goddelijke boodschap, heling, hogere leiding"],["Leeuw","moed, kracht, instinct"],
+ ["Hond","trouw, instinct, het getemde"],["Roos","zuiverheid (wit) of passie (rood)"],
+ ["Lelie","onschuld en zuiverheid van gedachten"],["Granaatappel","vruchtbaarheid, verborgen kennis"],
+ ["Kroon","gezag, succes, meesterschap"],["Slang","verleiding, kennis, transformatie"],
+ ["Torens","isolement, ego of een grens"],["Zonnebloem","groei naar het licht, vreugde"],
+ ["Blinddoek","niet willen of kunnen zien"],["Wolken","verwarring of hemelse tussenkomst"]
+];
+
+/* ---------- deck opbouwen ---------- */
+const RANKN = ["Aas","Twee","Drie","Vier","Vijf","Zes","Zeven","Acht","Negen","Tien"];
+const DECK = [];
+MAJOR.forEach(m=>DECK.push({...m,id:"major-"+m.n,type:"major"}));
+Object.keys(SUITS).forEach(s=>{
+  for(let i=1;i<=10;i++) DECK.push({id:s+"-"+i,type:"minor",suit:s,n:i,name:RANKN[i-1]+" van "+SUITS[s].name,kw:MINOR[s][i-1],scene:MINSYM[s+"-"+i]});
+  ["S","R","Q","K"].forEach(r=>DECK.push({id:s+"-"+r,type:"court",suit:s,rank:r,name:COURT[r].name+" van "+SUITS[s].name,kw:COURTM[s][r]}));
+});
+const byId = id=>DECK.find(c=>c.id===id);
+
+/* ---------- iconen ---------- */
+const ICON = {
+ staven:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 21L18 3"/><path d="M15 7.5c1.8-.2 3 .4 3.6 1.6M11.5 12.7c-1.6-.6-2.6-1.6-2.8-3"/></svg>',
+ bekers:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 3.5h13v3a6.5 6.5 0 0 1-13 0z"/><path d="M12 13v5M8 20.5h8"/></svg>',
+ zwaarden:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2 3v11h-4V5z"/><path d="M7 16h10M12 16v6"/></svg>',
+ pentakels:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><path d="M12 4.5L16.4 18 4.9 9.7h14.2L7.6 18z"/></svg>'
+};
+function cardLabel(c){
+  if(c.type==="major") return ROMAN[c.n];
+  if(c.type==="court") return COURT[c.rank].short;
+  return c.n===1?"A":c.n;
+}
+function cardHTML(c,cls=""){
+  const glyph = c.type==="major" ? c.astro+VS : ICON[c.suit];
+  const sc = c.suit ? " s-"+c.suit : "";
+  return `<div class="card${sc} ${cls}" data-id="${c.id}"><div class="num">${cardLabel(c)}</div><div class="glyph">${glyph}</div><div class="nm">${c.name}</div></div>`;
+}
+
+/* ===================== HULP ===================== */
+const $ = s=>document.querySelector(s);
+const rnd = a=>a[Math.floor(Math.random()*a.length)];
+const shuffle = a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const reduce = n=>String(n).split("").reduce((s,d)=>s+ +d,0);
+function store(k,v){try{ if(v===undefined) return JSON.parse(localStorage.getItem(k)); localStorage.setItem(k,JSON.stringify(v)); }catch(e){return null}}
+let STATS = store("tarot-stats")||{};   // {id:{ok,bad}}
+let BEST = store("tarot-best")||{runs:0,best:0};
+
+function weightedPick(pool){
+  const w = pool.map(c=>{const s=STATS[c.id]||{ok:0,bad:0};return 1+s.bad*2-Math.min(s.ok,3)*.2});
+  let t = w.reduce((a,b)=>a+Math.max(b,.3),0), r=Math.random()*t;
+  for(let i=0;i<pool.length;i++){r-=Math.max(w[i],.3);if(r<=0)return pool[i]}
+  return pool[pool.length-1];
+}
+// maak meerkeuze: correct + 3 unieke afleiders
+function mc(correct,pool){
+  const opts=[correct];
+  for(const o of shuffle(pool)){ if(opts.length>=4)break; if(!opts.includes(o)) opts.push(o); }
+  return shuffle(opts);
+}
+
+/* ===================== VRAAGGENERATOREN ===================== */
+const majors = DECK.filter(c=>c.type==="major");
+const minors = DECK.filter(c=>c.type==="minor");
+const courts = DECK.filter(c=>c.type==="court");
+const numExplain = c=>`Numerologie: ${c.n===1?"de Aas (1)":"de "+c.n} staat voor <b>${NUM[c.n].t.toLowerCase()}</b> (${NUM[c.n].d}); ${SUITS[c.suit].name} = <b>${SUITS[c.suit].el}</b> (${SUITS[c.suit].theme}).`;
+
+const GEN = {
+ major:[
+  ()=>{const c=weightedPick(majors);const opts=mc(c.kw,majors.map(m=>m.kw));
+   return {card:c,id:c.id,q:`Wat is de kernbetekenis van <b>${c.name}</b>?`,opts,ans:c.kw,ex:`${c.up}<br><i>Omgekeerd:</i> ${c.rev}`}},
+  ()=>{const c=weightedPick(majors);const opts=mc(c.name,majors.map(m=>m.name));
+   return {id:c.id,q:`Welke kaart past bij: <i>"${c.up}"</i>`,opts,ans:c.name,ex:`${c.name} (${ROMAN[c.n]}) — ${c.kw}.`}},
+  ()=>{const c=weightedPick(majors);const opts=mc(c.rev,majors.map(m=>m.rev));
+   return {card:c,id:c.id,q:`Wat betekent <b>${c.name}</b> <u>omgekeerd</u>?`,opts,ans:c.rev,ex:`Rechtop: ${c.kw}. Omgekeerd keert die energie zich naar binnen of raakt ze geblokkeerd.`}}
+ ],
+ minor:[
+  ()=>{const c=weightedPick(minors);const pool=minors.filter(m=>m.suit===c.suit||m.n===c.n).map(m=>m.kw);
+   return {card:c,id:c.id,q:`Wat betekent de <b>${c.name}</b>?`,opts:mc(c.kw,pool),ans:c.kw,ex:numExplain(c)+(c.scene?`<br>Beeld: ${c.scene}`:"")}},
+  ()=>{const c=weightedPick(minors);const pool=minors.filter(m=>m.suit===c.suit||m.n===c.n).map(m=>m.name);
+   return {id:c.id,q:`Welke kaart betekent: <i>"${c.kw}"</i>?`,opts:mc(c.name,pool),ans:c.name,ex:numExplain(c)}},
+  ()=>{const keys=Object.keys(MINSYM);const k=rnd(keys);const c=byId(k);const pool=minors.filter(m=>m.n===c.n||m.suit===c.suit).map(m=>m.name);
+   return {id:c.id,q:`Welke kaart toont dit beeld? <i>"${MINSYM[k]}"</i>`,opts:mc(c.name,pool),ans:c.name,ex:`${c.name}: ${c.kw}. `+numExplain(c)}}
+ ],
+ court:[
+  ()=>{const c=weightedPick(courts);const pool=courts.filter(m=>m.suit===c.suit||m.rank===c.rank).map(m=>m.name);
+   return {id:c.id,q:`Welke hofkaart beschrijft: <i>"${c.kw}"</i>?`,opts:mc(c.name,pool),ans:c.name,ex:`${COURT[c.rank].name}: ${COURT[c.rank].role}. ${SUITS[c.suit].name} = ${SUITS[c.suit].el}. Samen: "${COURT[c.rank].el.toLowerCase()} van ${SUITS[c.suit].el.toLowerCase()}".`}},
+  ()=>{const r=rnd(Object.keys(COURT));const opts=mc(COURT[r].name,Object.values(COURT).map(x=>x.name));
+   return {id:"court-"+r,q:`Welke rang staat voor: <i>"${COURT[r].role}"</i>?`,opts,ans:COURT[r].name,ex:`De ${COURT[r].name} hoort (Golden Dawn) bij het element ${COURT[r].el}.`}}
+ ],
+ symbol:[
+  ()=>{const c=weightedPick(majors);const s=rnd(c.sym);const opts=mc(c.name,majors.map(m=>m.name));
+   return {id:c.id,q:`Op welke kaart zie je: <b>${s[0].toLowerCase()}</b>?`,opts,ans:c.name,ex:`${s[0]} op ${c.name}: ${s[1]}.`}},
+  ()=>{const c=weightedPick(majors);const s=rnd(c.sym);const all=majors.flatMap(m=>m.sym.map(x=>x[1]));
+   return {card:c,id:c.id,q:`Wat symboliseert <b>${s[0].toLowerCase()}</b> op ${c.name}?`,opts:mc(s[1],all),ans:s[1],ex:`${c.name}: ${c.kw}.`}},
+  ()=>{const s=rnd(COLORS);const opts=mc(s[1],COLORS.map(x=>x[1]));
+   return {id:"kleur-"+s[0],q:`Waar staat de kleur <b>${s[0].toLowerCase()}</b> meestal voor in de tarot?`,opts,ans:s[1],ex:`Bijvoorbeeld: ${s[2]}.`}},
+  ()=>{const s=rnd(SYMBOLS);const opts=mc(s[1],SYMBOLS.map(x=>x[1]));
+   return {id:"sym-"+s[0],q:`Wat betekent het terugkerende symbool <b>${s[0].toLowerCase()}</b>?`,opts,ans:s[1],ex:`${s[0]}: ${s[1]}.`}}
+ ],
+ numero:[
+  ()=>{const n=Math.floor(Math.random()*11);const opts=mc(NUM[n].t+" — "+NUM[n].d,Object.values(NUM).map(x=>x.t+" — "+x.d));
+   const maj=MAJOR[n];return {id:"num-"+n,q:`Waar staat het getal <b>${n}</b> voor in de tarot-numerologie?`,opts,ans:NUM[n].t+" — "+NUM[n].d,ex:`Bij de Grote Arcana hoort ${n} bij ${maj.name} (${maj.kw}).`}},
+  ()=>{const c=weightedPick(majors);const opts=mc(ROMAN[c.n],ROMAN.slice());
+   return {id:c.id,q:`Welk nummer draagt <b>${c.name}</b>?`,opts,ans:ROMAN[c.n],ex:`${c.name} is kaart ${c.n} (${ROMAN[c.n]}). `+(c.n>9?`Reductie: ${String(c.n).split("").join(" + ")} = ${reduce(c.n)} → ${MAJOR[reduce(c.n)].name}.`:`${NUM[c.n].t}: ${NUM[c.n].d}.`)}},
+  ()=>{const c=weightedPick(majors.filter(m=>m.n>=10));const r=reduce(c.n);const root=MAJOR[r];const opts=mc(root.name,majors.filter(m=>m.n<10).map(m=>m.name));
+   return {card:c,id:c.id,q:`Tot welke kaart reduceert <b>${c.name}</b> (${ROMAN[c.n]})?`,opts,ans:root.name,ex:`${String(c.n).split("").join(" + ")} = ${r}: ${root.name}. ${c.name} (${c.kw}) is een hogere octaaf van ${root.name} (${root.kw}).`}},
+  ()=>{const n=1+Math.floor(Math.random()*10);const s=rnd(Object.keys(SUITS));const c=byId(s+"-"+n);
+   const pool=Object.values(NUM).slice(1).map(x=>x.t);
+   return {card:c,id:c.id,q:`Welk numerologisch thema zit in de <b>${c.name}</b>?`,opts:mc(NUM[n].t,pool),ans:NUM[n].t,ex:numExplain(c)+` Vandaar: ${c.kw}.`}},
+  ()=>{const row=rnd([0,1,2]);const names=["het bewuste: de wereld en het ego","het innerlijk: zelfonderzoek en karakter","het spirituele: transformatie en verlichting"];
+   const first=MAJOR[row*7+1].name, last=MAJOR[row*7+7].name;
+   return {id:"rij-"+row,q:`In de Narrenreis vormt kaart ${ROMAN[row*7+1]} t/m ${ROMAN[row*7+7]} (${first} → ${last}) een rij. Waar gaat die fase over?`,opts:shuffle(names),ans:names[row],ex:`De drie rijen van zeven: I–VII de buitenwereld, VIII–XIV de binnenwereld, XV–XXI de spirituele wereld.`}}
+ ],
+ element:[
+  ()=>{const s=rnd(Object.keys(SUITS));const opts=mc(SUITS[s].el,["Vuur","Water","Lucht","Aarde"]);
+   return {id:"el-"+s,q:`Welk element hoort bij <b>${SUITS[s].name}</b>?`,opts,ans:SUITS[s].el,ex:`${SUITS[s].name} = ${SUITS[s].el}: ${SUITS[s].theme}.`}},
+  ()=>{const s=rnd(Object.keys(SUITS));const opts=mc(SUITS[s].signs,Object.values(SUITS).map(x=>x.signs));
+   return {id:"sign-"+s,q:`Welke sterrenbeelden horen bij <b>${SUITS[s].name}</b> (${SUITS[s].el})?`,opts,ans:SUITS[s].signs,ex:`${SUITS[s].el}tekens: ${SUITS[s].signs}.`}},
+  ()=>{const s=rnd(Object.keys(SUITS));const opts=mc(SUITS[s].theme,Object.values(SUITS).map(x=>x.theme));
+   return {id:"theme-"+s,q:`Over welk levensgebied gaan de <b>${SUITS[s].name}</b>?`,opts,ans:SUITS[s].theme,ex:`In gewone speelkaarten zijn ${SUITS[s].name} de ${SUITS[s].cards}.`}},
+  ()=>{const c=weightedPick(majors);const opts=mc(c.astroName,majors.map(m=>m.astroName));
+   return {card:c,id:c.id,q:`Welke astrologische correspondentie hoort bij <b>${c.name}</b>?`,opts,ans:c.astroName,ex:`${c.name} ↔ ${c.astro}${VS} ${c.astroName}.`}}
+ ]
+};
+
+/* ===================== QUIZ ===================== */
+let Q = null;
+function renderStats(){
+  const seen=Object.keys(STATS).length, ok=Object.values(STATS).reduce((a,s)=>a+s.ok,0), bad=Object.values(STATS).reduce((a,s)=>a+s.bad,0);
+  $("#statBox").innerHTML = BEST.runs?`<div><b>${BEST.runs}</b>tests gedaan</div><div><b>${BEST.best}%</b>beste score</div><div><b>${ok+bad?Math.round(ok/(ok+bad)*100):0}%</b>totaal goed</div><div><b>${seen}</b>onderwerpen geoefend</div>`:"";
+}
+function startQuiz(){
+  const cats=[...document.querySelectorAll("#quizSetup input:checked")].map(i=>i.value);
+  if(!cats.length){alert("Kies minstens één onderwerp.");return}
+  const len=+$("#qLen").value, qs=[], used=new Set();
+  let guard=0;
+  while(qs.length<len && guard++<len*20){
+    const q=rnd(GEN[rnd(cats)])();
+    const key=q.q+q.ans; if(used.has(key))continue; used.add(key); qs.push(q);
+  }
+  Q={qs,i:0,score:0,wrong:[]};
+  $("#quizSetup").style.display="none"; $("#quizRun").style.display="block";
+  showQ();
+}
+function showQ(){
+  const q=Q.qs[Q.i];
+  $("#quizRun").innerHTML=`
+   <div class="qhead"><span>Vraag ${Q.i+1} van ${Q.qs.length}</span><span>Score: ${Q.score}</span></div>
+   <div class="progress"><div style="width:${Q.i/Q.qs.length*100}%"></div></div>
+   ${q.card?`<div class="qcard">${cardHTML(q.card)}</div>`:""}
+   <div class="qtext">${q.q}</div>
+   <div class="opts" style="clear:both">${q.opts.map((o,k)=>`<button class="opt" data-k="${k}">${o}</button>`).join("")}</div>
+   <div id="fb"></div>
+   <p style="display:flex;justify-content:space-between;gap:8px"><button onclick="endQuiz(true)">Stoppen</button><button class="primary" id="next" style="display:none">${Q.i+1<Q.qs.length?"Volgende →":"Bekijk resultaat"}</button></p>`;
+  document.querySelectorAll(".opt").forEach(b=>b.onclick=()=>answer(b));
+  $("#next").onclick=()=>{Q.i++; Q.i<Q.qs.length?showQ():endQuiz()};
+  window.scrollTo({top:$("#quizRun").offsetTop-70,behavior:"smooth"});
+}
+function answer(b){
+  const q=Q.qs[Q.i], pick=q.opts[+b.dataset.k], ok=pick===q.ans;
+  document.querySelectorAll(".opt").forEach(x=>{x.disabled=true; if(q.opts[+x.dataset.k]===q.ans)x.classList.add("correct")});
+  if(!ok)b.classList.add("wrong");
+  const s=STATS[q.id]||{ok:0,bad:0}; ok?s.ok++:s.bad++; STATS[q.id]=s; store("tarot-stats",STATS);
+  if(ok)Q.score++; else Q.wrong.push(q);
+  $("#fb").innerHTML=`<div class="explain"><b style="color:var(${ok?"--ok":"--bad"})">${ok?"✓ Goed!":"✗ Helaas."}</b> ${ok?"":"Juist: <b>"+q.ans+"</b><br>"}${q.ex}</div>`;
+  $("#next").style.display="inline-block"; $("#next").focus();
+}
+function endQuiz(stopped){
+  const done=stopped?Q.i:Q.qs.length; if(!done){resetQuiz();return}
+  const pct=Math.round(Q.score/done*100);
+  BEST.runs++; BEST.best=Math.max(BEST.best,pct); store("tarot-best",BEST);
+  const msg=pct>=90?"Meester van de Arcana! ☉":pct>=70?"Mooi werk — De Ster schijnt op je. ✶":pct>=50?"Goed op weg, Magiër in opleiding.":"De Dwaas begint aan zijn reis — blijf oefenen!";
+  $("#quizRun").innerHTML=`<div style="text-align:center"><div class="score">${Q.score} / ${done}</div><h3>${msg}</h3>
+   <p><button class="primary" onclick="startQuiz()">Nog een keer</button> <button onclick="resetQuiz()">Andere onderwerpen</button></p></div>
+   ${Q.wrong.length?`<h3>Om te herhalen</h3>`+Q.wrong.map(q=>`<div class="mist"><div>${q.q}</div><div>→ <b>${q.ans}</b></div><div class="muted">${q.ex}</div></div>`).join(""):""}`;
+}
+function resetQuiz(){ $("#quizRun").style.display="none"; $("#quizSetup").style.display="block"; renderStats(); }
+$("#startQuiz").onclick=startQuiz;
+
+/* ===================== LEREN ===================== */
+function renderDeck(f){
+  const cards = f==="major"?majors:DECK.filter(c=>c.suit===f);
+  $("#deckIntro").innerHTML = f==="major"
+    ? "De 22 kaarten van de Grote Arcana beschrijven grote levenslessen en archetypen — de reis van De Dwaas."
+    : `<b>${SUITS[f].name}</b> · element <b>${SUITS[f].el}</b> · ${SUITS[f].signs}. Thema: ${SUITS[f].theme}.`;
+  $("#deckGrid").innerHTML = cards.map(c=>cardHTML(c)).join("");
+}
+document.addEventListener("click",e=>{
+  const c=e.target.closest(".card[data-id]");
+  if(c && !c.closest(".qcard") && !c.classList.contains("big")) openCard(c.dataset.id);
+});
+function openCard(id){
+  const c=byId(id); let html="";
+  if(c.type==="major"){
+    const r=c.n>9?`<dd>${String(c.n).split("").join(" + ")} = ${reduce(c.n)} → verwant aan <b>${MAJOR[reduce(c.n)].name}</b></dd>`:"";
+    const higher=MAJOR.filter(m=>m.n>9&&reduce(m.n)===c.n).map(m=>m.name).join(", ");
+    html=`<dl><dt>Kernwoorden</dt><dd>${c.kw.split(", ").map(k=>`<span class="tag">${k}</span>`).join("")}</dd>
+      <dt>Rechtop</dt><dd>${c.up}</dd><dt>Omgekeerd</dt><dd>${c.rev}</dd>
+      <dt>Symboliek</dt><dd><ul class="sym">${c.sym.map(s=>`<li><b>${s[0]}</b> — ${s[1]}</li>`).join("")}</ul></dd>
+      <dt>Numerologie</dt><dd>${c.n<=10?`${c.n}: ${NUM[c.n].t.toLowerCase()} — ${NUM[c.n].d}`:"Hoger getal"}</dd>${r}${higher?`<dd>Hogere octaaf: ${higher}</dd>`:""}
+      <dt>Astrologie</dt><dd>${c.astro}${VS} ${c.astroName}</dd></dl>`;
+  } else if(c.type==="minor"){
+    html=`<dl><dt>Betekenis</dt><dd>${c.kw.split(", ").map(k=>`<span class="tag">${k}</span>`).join("")}</dd>
+      ${c.scene?`<dt>Beeld</dt><dd>${c.scene}</dd>`:""}
+      <dt>Numerologie</dt><dd><b>${c.n} — ${NUM[c.n].t}</b>: ${NUM[c.n].d}. Verwant aan ${MAJOR[c.n].name}.</dd>
+      <dt>Element</dt><dd><b>${SUITS[c.suit].el}</b> — ${SUITS[c.suit].theme}</dd>
+      <dt>Zo lees je hem</dt><dd>${NUM[c.n].t} in het domein van ${SUITS[c.suit].el.toLowerCase()} → ${c.kw}.</dd></dl>`;
+  } else {
+    html=`<dl><dt>Persoonlijkheid</dt><dd>${c.kw.split(", ").map(k=>`<span class="tag">${k}</span>`).join("")}</dd>
+      <dt>Rang</dt><dd><b>${COURT[c.rank].name}</b> (${COURT[c.rank].el}): ${COURT[c.rank].role}</dd>
+      <dt>Kleur</dt><dd><b>${SUITS[c.suit].name}</b> (${SUITS[c.suit].el}): ${SUITS[c.suit].theme}</dd>
+      <dt>Elementcombinatie</dt><dd>${COURT[c.rank].el} van ${SUITS[c.suit].el}</dd></dl>`;
+  }
+  $("#modalBody").innerHTML=`<div class="detail"><div>${cardHTML(c,"big")}</div><div><h2>${c.name}</h2>${c.en?`<div class="muted">${c.en} · ${ROMAN[c.n]}</div>`:""}${html}</div></div>`;
+  $("#modal").classList.add("show");
+}
+function closeModal(){$("#modal").classList.remove("show")}
+$("#modal").addEventListener("click",e=>{if(e.target.id==="modal")closeModal()});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeModal()});
+document.querySelectorAll("#deckTabs button").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll("#deckTabs button").forEach(x=>x.classList.remove("active"));b.classList.add("active");renderDeck(b.dataset.f)});
+
+/* ===================== NUMEROLOGIE / SYMBOLIEK ===================== */
+function renderStatic(){
+  $("#numTable").innerHTML=`<tr><th>Getal</th><th>Thema</th><th>Grote Arcana</th><th>Kleine Arcana (voorbeeld)</th></tr>`+
+   Object.keys(NUM).map(n=>`<tr><td><b>${n}</b></td><td><b>${NUM[n].t}</b><br><span class="muted">${NUM[n].d}</span></td><td>${MAJOR[n].name}</td><td>${n>0?RANKN[n-1]+"en: "+["staven","bekers","zwaarden","pentakels"].map(s=>MINOR[s][n-1].split(",")[0]).join(" · "):"—"}</td></tr>`).join("");
+  const rows=["I–VII · De buitenwereld: bewustzijn, ego en maatschappij","VIII–XIV · De binnenwereld: karakter, zelfonderzoek en loslaten","XV–XXI · De spirituele wereld: schaduw, verlichting en heelheid"];
+  $("#rows7").innerHTML=`<div class="row7">${cardHTML(MAJOR[0]&&{...MAJOR[0],id:"major-0",type:"major"})}</div>`+
+   rows.map((t,r)=>`<div class="muted">${t}</div><div class="row7">${majors.slice(r*7+1,r*7+8).map(c=>cardHTML(c)).join("")}</div>`).join("");
+  let red="";
+  for(let n=1;n<=9;n++){
+    const fam=majors.filter(m=>m.n>0&&(m.n===n||(m.n>9&&reduce(m.n)===n)||(m.n>9&&reduce(reduce(m.n))===n&&reduce(m.n)>9)));
+    red+=`<div class="mist"><b>${n} · ${NUM[n].t}</b>: ${fam.map(m=>`${m.name} (${ROMAN[m.n]})`).join(" → ")}</div>`;
+  }
+  $("#reduct").innerHTML=red;
+  $("#suitInfo").innerHTML=Object.keys(SUITS).map(s=>`<div class="panel"><div style="display:flex;gap:12px;align-items:center"><div class="card s-${s}" style="width:60px;padding:4px;cursor:default"><div class="glyph">${ICON[s]}</div></div><div><h3 style="margin:0">${SUITS[s].name}</h3><div class="muted">${SUITS[s].el} · ${SUITS[s].signs}</div></div></div><p>${SUITS[s].theme}.</p><p class="muted" style="margin:0">In speelkaarten: ${SUITS[s].cards}</p></div>`).join("");
+  $("#courtTable").innerHTML=`<tr><th>Rang</th><th>Element</th><th>Rol</th></tr>`+Object.values(COURT).map(c=>`<tr><td><b>${c.name}</b></td><td>${c.el}</td><td>${c.role}</td></tr>`).join("");
+  $("#colorTable").innerHTML=`<tr><th>Kleur</th><th>Betekenis</th><th>Voorbeeld</th></tr>`+COLORS.map(c=>`<tr><td><b>${c[0]}</b></td><td>${c[1]}</td><td class="muted">${c[2]}</td></tr>`).join("");
+  $("#symTable").innerHTML=`<tr><th>Symbool</th><th>Betekenis</th></tr>`+SYMBOLS.map(c=>`<tr><td><b>${c[0]}</b></td><td>${c[1]}</td></tr>`).join("");
+}
+
+/* ===================== GEBOORTEKAART ===================== */
+$("#calcBirth").onclick=()=>{
+  const v=$("#bdate").value; if(!v){$("#birthOut").innerHTML="<p class='muted'>Kies eerst een datum.</p>";return}
+  const [y,m,d]=v.split("-").map(Number);
+  const sum=d+m+y; const steps=[`${d} + ${m} + ${y} = ${sum}`];
+  let n=sum;
+  while(n>22){const r=reduce(n);steps.push(`${String(n).split("").join(" + ")} = ${r}`);n=r}
+  const pers = n===22?0:n;
+  const chain=[pers];
+  let k=n; while(k>9){k=reduce(k);chain.push(k)}
+  const uniq=[...new Set(chain)];
+  const cards=uniq.map(i=>({...MAJOR[i],id:"major-"+i,type:"major"}));
+  $("#birthOut").innerHTML=`<div class="chain">${steps.join("<br>")}${n===22?"<br>22 = De Dwaas (0)":""}</div>
+   <div class="row7" style="margin-top:16px">${cards.map(c=>cardHTML(c)).join("")}</div>
+   ${cards.map((c,i)=>`<p><b>${i===0?(cards.length>1?"Persoonlijkheidskaart":"Persoonlijkheids- én zielskaart"):"Zielskaart"}: ${c.name}</b> — ${c.kw}. <span class="muted">${c.up}</span></p>`).join("")}`;
+};
+
+/* ===================== NAVIGATIE ===================== */
+function go(p){
+  document.querySelectorAll("section.page").forEach(s=>s.classList.toggle("show",s.id===p));
+  document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("active",b.dataset.page===p));
+  if(location.hash!=="#"+p) history.replaceState(null,"","#"+p);
+}
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>go(b.dataset.page));
+renderDeck("major"); renderStatic(); renderStats();
+const h=location.hash.slice(1); if(h&&document.getElementById(h)) go(h);
+</script>
+</body>
+</html>
