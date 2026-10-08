@@ -35,7 +35,155 @@ button:disabled{opacity:.5;cursor:default}
 section.page{display:none;padding:24px 0 60px}
 section.page.show{display:block}
 .panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px}
-.muted{color:var(--muted)}r de Grote Arcana. Leg je kaart I t/m XXI in drie rijen, dan zie je drie fasen van groei.</p>
+.muted{color:var(--muted)}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 18px}
+.tabs button{padding:6px 14px;font-size:.92rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:14px}
+
+/* kaart */
+.card{position:relative;aspect-ratio:7/12;border-radius:12px;background:linear-gradient(160deg,#2f2760,#1b1636);border:1.5px solid var(--gold);box-shadow:0 0 0 4px #1b1636 inset,0 0 0 5px rgba(217,180,90,.45) inset,0 6px 18px rgba(0,0,0,.4);display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:12px 6px;text-align:center;cursor:pointer;transition:transform .15s;color:var(--text)}
+.card:hover{transform:translateY(-3px)}
+.card .num{font-family:"Cormorant Garamond",serif;font-weight:700;color:var(--gold2);font-size:1.1rem}
+.card .glyph{font-size:2.6rem;line-height:1;color:var(--gold2);font-family:"Segoe UI Symbol","Noto Sans Symbols","DejaVu Sans",sans-serif}
+.card .glyph svg{width:46px;height:46px}
+.card .nm{font-family:"Cormorant Garamond",serif;font-weight:600;font-size:1rem;line-height:1.15}
+.card.big{width:170px;cursor:default;margin:0 auto}
+.card.big .glyph{font-size:3.6rem}.card.big .glyph svg{width:64px;height:64px}
+.card.big .nm{font-size:1.2rem}
+.s-staven{--sc:var(--vuur)}.s-bekers{--sc:var(--water)}.s-zwaarden{--sc:var(--lucht)}.s-pentakels{--sc:var(--aarde)}
+.card[class*="s-"] .glyph{color:var(--sc)}
+.card[class*="s-"]{border-color:var(--sc)}
+
+/* modal */
+.modal{position:fixed;inset:0;background:rgba(8,6,20,.75);display:none;align-items:flex-start;justify-content:center;z-index:50;overflow-y:auto;padding:30px 16px}
+.modal.show{display:flex}
+.modal .box{background:var(--bg2);border:1px solid var(--gold);border-radius:18px;max-width:720px;width:100%;padding:24px;position:relative}
+.close{position:absolute;top:12px;right:12px;padding:4px 12px}
+.detail{display:grid;grid-template-columns:180px 1fr;gap:22px}
+@media(max-width:600px){.detail{grid-template-columns:1fr}}
+.tag{display:inline-block;font-size:.8rem;padding:3px 10px;border-radius:999px;background:rgba(217,180,90,.15);color:var(--gold2);margin:0 4px 4px 0}
+dl{margin:0}dt{font-weight:600;color:var(--gold2);margin-top:8px}dd{margin:2px 0 0}
+ul.sym{padding-left:18px;margin:6px 0}ul.sym li{margin:3px 0}
+
+/* quiz */
+.quiz-setup label{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;border-radius:10px;cursor:pointer}
+.quiz-setup label:hover{background:rgba(255,255,255,.04)}
+.opts{display:grid;gap:10px;margin:16px 0}
+.opt{text-align:left;border-radius:12px;padding:12px 16px;background:var(--bg2)}
+.opt.correct{border-color:var(--ok);background:rgba(92,196,149,.15)}
+.opt.wrong{border-color:var(--bad);background:rgba(228,103,122,.15)}
+.progress{height:6px;background:var(--line);border-radius:6px;overflow:hidden;margin:8px 0 18px}
+.progress div{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold2));transition:width .3s}
+.qhead{display:flex;justify-content:space-between;color:var(--muted);font-size:.9rem}
+.qtext{font-family:"Cormorant Garamond",serif;font-size:1.6rem;font-weight:600;line-height:1.25}
+.qcard{float:right;width:96px;margin:0 0 10px 14px}
+.qcard .card{cursor:default}.qcard .card .glyph{font-size:2rem}.qcard .card .nm{font-size:.85rem}
+.explain{border-left:3px solid var(--gold);padding:8px 14px;background:rgba(217,180,90,.07);border-radius:0 10px 10px 0;margin-top:6px}
+.score{font-family:"Cormorant Garamond",serif;font-size:3.4rem;color:var(--gold2);font-weight:700}
+.mist{border-top:1px solid var(--line);padding:10px 0}
+table{width:100%;border-collapse:collapse}
+th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--gold2);font-weight:600}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.row7{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 16px}
+.row7 .card{width:74px;padding:6px 3px}.row7 .card .glyph{font-size:1.5rem}.row7 .card .nm{font-size:.72rem}.row7 .card .num{font-size:.85rem}
+input[type=date],select{font:inherit;background:var(--bg2);color:var(--text);border:1px solid var(--line);border-radius:10px;padding:9px 12px;color-scheme:dark}
+.chain{font-family:"Cormorant Garamond",serif;font-size:1.4rem;color:var(--gold2)}
+footer{text-align:center;color:var(--muted);font-size:.85rem;padding:20px 0 40px}
+.stats{display:flex;gap:18px;flex-wrap:wrap;margin-top:10px}
+.stats div{background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:10px 16px}
+.stats b{display:block;font-size:1.4rem;color:var(--gold2)}
+
+/* lezing */
+textarea,input[type=text],input[type=number]{font:inherit;background:var(--bg2);color:var(--text);border:1px solid var(--line);border-radius:10px;padding:9px 12px;width:100%}
+textarea{min-height:64px;resize:vertical}
+.field{margin-bottom:14px}.field>label{display:block;font-weight:600;color:var(--gold2);margin-bottom:5px}
+.posrow{display:grid;grid-template-columns:minmax(150px,1fr) minmax(200px,2fr) auto;gap:10px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
+.posrow .pl b{display:block}.posrow .pl span{color:var(--muted);font-size:.85rem}
+.posrow select,#rSpread{width:100%;max-width:100%}
+#freeCount{display:block;margin-top:8px}
+.revlab{display:flex;gap:6px;align-items:center;white-space:nowrap;cursor:pointer;font-size:.92rem}
+@media(max-width:640px){.posrow{grid-template-columns:1fr auto}.posrow .pl{grid-column:1/-1}}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.card.rev{transform:rotate(180deg)}.card.rev:hover{transform:rotate(180deg) translateY(3px)}
+.spreadview{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:10px 0 20px}
+.spreadview .slot{width:84px;text-align:center;font-size:.78rem;color:var(--muted)}
+.spreadview .card{padding:6px 3px;margin-bottom:5px}.spreadview .card .glyph{font-size:1.6rem}.spreadview .card .glyph svg{width:30px;height:30px}.spreadview .card .nm{font-size:.72rem}.spreadview .card .num{font-size:.85rem}
+.reading h3{color:var(--gold2);margin-top:26px}
+.pos-ex{display:grid;grid-template-columns:78px 1fr;gap:16px;padding:14px 0;border-top:1px solid var(--line)}
+.pos-ex .card{padding:5px 3px}.pos-ex .card .glyph{font-size:1.5rem}.pos-ex .card .glyph svg{width:28px;height:28px}.pos-ex .card .nm{font-size:.7rem}.pos-ex .card .num{font-size:.8rem}
+.pos-ex h4{margin:0 0 4px;font-size:1rem}.pos-ex h4 small{color:var(--muted);font-weight:400}
+.pos-ex p{margin:4px 0}
+.bars{display:grid;gap:6px;max-width:420px}
+.bar{display:grid;grid-template-columns:90px 1fr 26px;gap:8px;align-items:center;font-size:.9rem}
+.bar i{display:block;height:10px;border-radius:6px;background:var(--line)}.bar i b{display:block;height:100%;border-radius:6px}
+.warn{color:var(--bad);font-size:.9rem}
+@media print{nav,header,footer,#readingForm,.btnrow{display:none!important}body{background:#fff;color:#000}.panel{border:none}.reading *{color:#000!important}}
+</style>
+</head>
+<body>
+<header class="wrap">
+  <h1>✦ Tarot Leren ✦</h1>
+  <p>Leer de 78 kaarten kennen: hun betekenis, symbolen, getallen en elementen — en test jezelf.</p>
+</header>
+<nav><div class="wrap">
+  <button data-page="test" class="active">🎴 Test</button>
+  <button data-page="leren">📖 Kaarten</button>
+  <button data-page="num">🔢 Numerologie</button>
+  <button data-page="sym">✶ Symboliek & elementen</button>
+  <button data-page="lezing">🔮 Lezing uitleggen</button>
+  <button data-page="geboorte">🌙 Geboortekaart</button>
+</div></nav>
+
+<main class="wrap">
+<!-- TEST -->
+<section class="page show" id="test">
+  <div id="quizSetup" class="panel quiz-setup">
+    <h2>Test je kennis</h2>
+    <p class="muted">Kies onderwerpen en lengte. Kaarten die je fout beantwoordt komen vaker terug.</p>
+    <div class="cols">
+      <div>
+        <label><input type="checkbox" value="major" checked> <span><b>Grote Arcana</b><br><span class="muted">betekenissen van de 22 trumpkaarten</span></span></label>
+        <label><input type="checkbox" value="minor" checked> <span><b>Kleine Arcana</b><br><span class="muted">Aas t/m 10 van de vier kleuren</span></span></label>
+        <label><input type="checkbox" value="court"> <span><b>Hofkaarten</b><br><span class="muted">Schildknaap, Ridder, Koningin, Koning</span></span></label>
+      </div>
+      <div>
+        <label><input type="checkbox" value="symbol" checked> <span><b>Symboliek</b><br><span class="muted">beelden, kleuren en hun betekenis</span></span></label>
+        <label><input type="checkbox" value="numero" checked> <span><b>Numerologie</b><br><span class="muted">getallen, reductie en rangorde</span></span></label>
+        <label><input type="checkbox" value="element"> <span><b>Elementen & astrologie</b><br><span class="muted">vuur, water, lucht, aarde en tekens</span></span></label>
+      </div>
+    </div>
+    <p style="margin-top:14px">Aantal vragen:
+      <select id="qLen"><option>10</option><option selected>20</option><option>30</option><option>50</option></select>
+      &nbsp;<button class="primary" id="startQuiz">Start de test</button>
+    </p>
+    <div class="stats" id="statBox"></div>
+  </div>
+  <div id="quizRun" class="panel" style="display:none"></div>
+</section>
+
+<!-- LEREN -->
+<section class="page" id="leren">
+  <h2>De 78 kaarten</h2>
+  <p class="muted">Tik op een kaart voor betekenis, symbolen en numerologie.</p>
+  <div class="tabs" id="deckTabs">
+    <button data-f="major" class="active">Grote Arcana</button>
+    <button data-f="staven">Staven</button>
+    <button data-f="bekers">Bekers</button>
+    <button data-f="zwaarden">Zwaarden</button>
+    <button data-f="pentakels">Pentakels</button>
+  </div>
+  <div id="deckIntro" class="muted" style="margin-bottom:14px"></div>
+  <div class="grid" id="deckGrid"></div>
+</section>
+
+<!-- NUMEROLOGIE -->
+<section class="page" id="num">
+  <h2>Numerologie in de tarot</h2>
+  <p>Elk getal heeft een eigen energie. In de Kleine Arcana vertelt het <b>getal</b> je <i>wat</i> er gebeurt, de <b>kleur</b> (het element) vertelt <i>waar</i> het speelt. Een Vijf is altijd een moment van onrust — bij Bekers in je gevoel, bij Pentakels in je financiën.</p>
+  <div class="panel" style="margin:18px 0"><table id="numTable"></table></div>
+  <h3>De Narrenreis: drie rijen van zeven</h3>
+  <p class="muted">De Dwaas (0) reist door de Grote Arcana. Leg je kaart I t/m XXI in drie rijen, dan zie je drie fasen van groei.</p>
   <div id="rows7"></div>
   <h3>Reductie: verwante kaarten</h3>
   <p class="muted">Tel de cijfers van een kaartnummer op (theosofische reductie) en je vindt de "wortel". Zo is De Toren (16 → 1+6 = 7) een hogere octaaf van De Zegewagen (7): waar de wagen bouwt met wilskracht, breekt de toren af wat niet klopt.</p>
@@ -54,6 +202,29 @@ section.page.show{display:block}
   <div class="panel"><table id="colorTable"></table></div>
   <h3 style="margin-top:24px">Terugkerende symbolen</h3>
   <div class="panel"><table id="symTable"></table></div>
+</section>
+
+<!-- LEZING -->
+<section class="page" id="lezing">
+  <h2>Lezing uitleggen</h2>
+  <p class="muted">Vul je vraag in, kies de legging en geef aan welke kaarten er op elke positie liggen. Je krijgt een uitleg per positie en een uitleg van de lezing als geheel: elementen, numerologie, terugkerende thema's en de kwintessens.</p>
+  <div class="panel" id="readingForm">
+    <div class="field"><label for="rQuestion">Je vraag (optioneel)</label>
+      <textarea id="rQuestion" placeholder="Bijv. Hoe kan ik het beste omgaan met de verandering in mijn werk?"></textarea></div>
+    <div class="field"><label for="rSpread">Legging</label>
+      <select id="rSpread"></select>
+      <span id="freeCount" style="display:none">&nbsp; aantal kaarten <input type="number" id="rCount" min="1" max="15" value="4" style="width:80px"></span>
+    </div>
+    <div id="spreadDesc" class="muted" style="margin-bottom:6px"></div>
+    <div id="posRows"></div>
+    <div class="btnrow">
+      <button class="primary" id="rExplain">🔮 Leg de lezing uit</button>
+      <button id="rRandom">Trek willekeurig</button>
+      <button id="rClear">Leegmaken</button>
+    </div>
+    <div id="rMsg" class="warn" style="margin-top:10px"></div>
+  </div>
+  <div id="readingOut" class="panel reading" style="display:none;margin-top:18px"></div>
 </section>
 
 <!-- GEBOORTEKAART -->
@@ -431,6 +602,270 @@ $("#calcBirth").onclick=()=>{
    ${cards.map((c,i)=>`<p><b>${i===0?(cards.length>1?"Persoonlijkheidskaart":"Persoonlijkheids- én zielskaart"):"Zielskaart"}: ${c.name}</b> — ${c.kw}. <span class="muted">${c.up}</span></p>`).join("")}`;
 };
 
+/* ===================== LEZING UITLEGGEN ===================== */
+const MINOR_REV = {
+ staven:["uitstel, gebrek aan motivatie, een idee dat niet van de grond komt","angst voor het onbekende, slecht plannen","vertraging, tegenvallende resultaten","onrust thuis, een viering die niet doorgaat","conflict vermijden, innerlijke strijd","gebrek aan erkenning, val na succes","overweldigd raken, opgeven","vertraging, frustratie, overhaasten","uitputting, wantrouwen, niet meer kunnen","lasten afwerpen, delegeren — of bezwijken"],
+ bekers:["emotioneel geblokkeerd, gevoelens onderdrukken","verbroken verbinding, onbalans in een relatie","te veel feesten, roddel, je buitengesloten voelen","uit de apathie komen, nieuwe interesse","aanvaarding, verder kunnen, vergeving","vastzitten in het verleden, loslaten","helderheid, een keuze maken, illusies doorzien","bang om te vertrekken, doelloos dwalen","ontevredenheid, oppervlakkig geluk","verstoorde harmonie, onrealistische verwachtingen"],
+ zwaarden:["verwarring, chaos, een verkeerd idee","informatie-overload, de knoop doorhakken","herstel, vergeving, pijn loslaten","rusteloosheid, burn-out, ontwaken","verzoening, wrok, het conflict achter je laten","niet verder kunnen, onafgemaakte zaken","betrapt worden, geweten, eerlijk opbiechten","zelfbevrijding, een nieuw perspectief","hoop, angsten loslaten, het valt mee","herstel, opkrabbelen, het ergste is voorbij"],
+ pentakels:["gemiste kans, slechte planning","overbelasting, financiële chaos","gebrek aan teamwerk, middelmatigheid","loslaten, gulheid — of juist roekeloos uitgeven","herstel na tegenslag, hulp aanvaarden","schuld, ongelijkheid in geven en nemen","ongeduld, weinig rendement","perfectionisme, gebrek aan focus","afhankelijkheid, overwerk, schijnluxe","familieconflict, financieel verlies"]
+};
+const COURT_REV = {
+ staven:{S:"slecht nieuws, ongerichte energie",R:"roekeloosheid, haast, opvliegendheid",Q:"jaloezie, dominantie, onzekerheid",K:"tirannie, impulsiviteit, onrealistische verwachtingen"},
+ bekers:{S:"emotionele onvolwassenheid, creatieve blokkade",R:"humeurigheid, onrealistische romantiek, jaloezie",Q:"emotionele afhankelijkheid, overgevoeligheid",K:"emotionele manipulatie, geslotenheid"},
+ zwaarden:{S:"roddel, haastige woorden",R:"agressie, onbezonnenheid, hardheid",Q:"kilte, bitterheid, overdreven kritiek",K:"machtsmisbruik, manipulatie, wreedheid"},
+ pentakels:{S:"uitstelgedrag, gebrek aan voortgang",R:"verveling, stilstand, koppigheid",Q:"onbalans werk-privé, zelfverwaarlozing",K:"hebzucht, materialisme, koppigheid"}
+};
+const ROLE_INTRO = {
+ past:"Dit ligt achter je, maar werkt nog door.",
+ present:"Zo staat het er nu voor.",
+ future:"Hier beweegt het naartoe als je op deze weg doorgaat.",
+ challenge:"Dit staat in de weg of stelt je nu op de proef.",
+ advice:"Dit is de energie die je kunt inzetten.",
+ outcome:"De waarschijnlijke uitkomst als de huidige lijn doorgaat — niet in steen gebeiteld.",
+ hidden:"Dit speelt onder de oppervlakte, vaak onbewust.",
+ self:"Dit zegt iets over jouw houding en hoe jij erin staat.",
+ others:"Dit is de invloed van je omgeving of van anderen.",
+ hopefear:"Dit kan iets zijn waar je naar verlangt én iets wat je vreest — vaak allebei tegelijk.",
+ core:"", neutral:""
+};
+const SPREADS = {
+ een:{name:"Eén kaart — dagkaart of kernvraag",desc:"Eén kaart geeft het centrale thema.",pos:[["De kaart","core","de kern van je vraag of het thema van vandaag"]]},
+ vtt:{name:"Drie kaarten — verleden, heden, toekomst",desc:"De klassieke tijdlijn: van waar je vandaan komt naar waar het heen gaat.",pos:[["Verleden","past","wat achter je ligt"],["Heden","present","waar je nu staat"],["Toekomst","future","waar het naartoe beweegt"]]},
+ sao:{name:"Drie kaarten — situatie, actie, uitkomst",desc:"Praktisch: wat is er aan de hand, wat kun je doen en wat levert dat op?",pos:[["Situatie","present","wat er speelt"],["Actie","advice","wat je kunt doen"],["Uitkomst","outcome","wat het oplevert"]]},
+ gls:{name:"Drie kaarten — geest, lichaam, ziel",desc:"Een momentopname van hoe je ervoor staat op drie niveaus.",pos:[["Geest","core","je gedachten en je mentale toestand"],["Lichaam","core","je lichaam en je materiële situatie"],["Ziel","core","je diepere behoefte en je spirituele kant"]]},
+ relatie:{name:"Relatie — vijf kaarten",desc:"Voor een relatie: liefde, vriendschap, familie of werk.",pos:[["Jij","self","wat jij inbrengt"],["De ander","others","wat de ander inbrengt"],["De verbinding","core","wat jullie samen hebben"],["De uitdaging","challenge","waar het schuurt"],["Het potentieel","outcome","waar de relatie naartoe kan groeien"]]},
+ keuze:{name:"Twee wegen — zes kaarten",desc:"Voor een keuze tussen twee opties. Vergelijk de weg en de uitkomst van A met die van B.",pos:[["De situatie","present","waar je nu staat"],["Weg A","neutral","wat optie A van je vraagt"],["Uitkomst A","outcome","waar optie A toe leidt"],["Weg B","neutral","wat optie B van je vraagt"],["Uitkomst B","outcome","waar optie B toe leidt"],["Advies","advice","wat je helpt bij het kiezen"]]},
+ kruis:{name:"Keltisch kruis — tien kaarten",desc:"De bekendste uitgebreide legging, voor een diepgaande blik op één vraag.",pos:[["1. Huidige situatie","present","het hart van de zaak"],["2. Kruisende kracht","challenge","wat er dwars ligt"],["3. Fundament","hidden","de onbewuste basis"],["4. Recent verleden","past","wat net achter je ligt"],["5. Kroon","core","je bewuste doel of beste mogelijkheid"],["6. Nabije toekomst","future","wat eraan komt"],["7. Jijzelf","self","je houding"],["8. Omgeving","others","invloed van anderen"],["9. Hoop en angst","hopefear","wat je hoopt of vreest"],["10. Uitkomst","outcome","waar het naartoe gaat"]]},
+ vrij:{name:"Vrije legging — eigen posities",desc:"Kies zelf het aantal kaarten en geef elke positie een eigen naam.",pos:[]}
+};
+
+// opties voor de kaartkeuze
+const CARD_OPTIONS = '<option value="">— kies een kaart —</option>' +
+  `<optgroup label="Grote Arcana">${majors.map(c=>`<option value="${c.id}">${ROMAN[c.n]} · ${c.name}</option>`).join("")}</optgroup>` +
+  Object.keys(SUITS).map(s=>`<optgroup label="${SUITS[s].name} (${SUITS[s].el})">${DECK.filter(c=>c.suit===s).map(c=>`<option value="${c.id}">${c.name}</option>`).join("")}</optgroup>`).join("");
+
+Object.entries(SPREADS).forEach(([k,s])=>{const o=document.createElement("option");o.value=k;o.textContent=s.name;$("#rSpread").appendChild(o)});
+$("#rSpread").value="vtt";
+
+function currentPositions(){
+  const k=$("#rSpread").value;
+  if(k!=="vrij") return SPREADS[k].pos;
+  const n=Math.max(1,Math.min(15,+$("#rCount").value||1));
+  return Array.from({length:n},(_,i)=>["Kaart "+(i+1),"neutral",""]);
+}
+function readRows(){
+  return [...document.querySelectorAll("#posRows .posrow")].map(r=>({
+    id:r.querySelector("select").value, rev:r.querySelector("input[type=checkbox]").checked,
+    label:(r.querySelector("input[type=text]")||{}).value
+  }));
+}
+function renderRows(prev){
+  prev = prev || readRows();
+  const k=$("#rSpread").value, pos=currentPositions();
+  $("#freeCount").style.display = k==="vrij"?"block":"none";
+  $("#spreadDesc").textContent = SPREADS[k].desc;
+  $("#posRows").innerHTML = pos.map((p,i)=>`<div class="posrow">
+    <div class="pl">${k==="vrij"?`<input type="text" value="${(prev[i]&&prev[i].label)||p[0]}" aria-label="Naam positie ${i+1}">`:`<b>${p[0]}</b><span>${p[2]}</span>`}</div>
+    <select aria-label="Kaart voor ${p[0]}">${CARD_OPTIONS}</select>
+    <label class="revlab"><input type="checkbox"> omgekeerd</label></div>`).join("");
+  [...document.querySelectorAll("#posRows .posrow")].forEach((r,i)=>{
+    if(prev[i]){ r.querySelector("select").value=prev[i].id||""; r.querySelector("input[type=checkbox]").checked=!!prev[i].rev; }
+  });
+}
+$("#rSpread").onchange=()=>renderRows();
+$("#rCount").oninput=()=>renderRows();
+$("#rClear").onclick=()=>{renderRows([]);$("#readingOut").style.display="none";$("#rMsg").textContent=""};
+$("#rRandom").onclick=()=>{
+  const ids=shuffle(DECK.map(c=>c.id));
+  renderRows(readRows().map((r,i)=>({...r,id:ids[i],rev:Math.random()<.3})));
+};
+
+/* ---- interpretatie ---- */
+function cardMeaning(c,rev){
+  if(c.type==="major") return {kw:rev?c.rev:c.kw, text:rev?c.rev:c.up};
+  if(c.type==="minor") return {kw:rev?MINOR_REV[c.suit][c.n-1]:c.kw, text:rev?MINOR_REV[c.suit][c.n-1]:c.kw};
+  return {kw:rev?COURT_REV[c.suit][c.rank]:c.kw, text:rev?COURT_REV[c.suit][c.rank]:c.kw};
+}
+const POSITIVE = new Set(["major-3","major-6","major-8","major-14","major-17","major-19","major-21","staven-1","staven-3","staven-4","staven-6","bekers-1","bekers-2","bekers-3","bekers-6","bekers-9","bekers-10","zwaarden-4","zwaarden-6","pentakels-1","pentakels-3","pentakels-6","pentakels-9","pentakels-10"]);
+const cap = s=>s.charAt(0).toUpperCase()+s.slice(1);
+const dot = s=>/[.!?]$/.test(s)?s:s+".";
+function cardContext(c){
+  if(c.type==="major") return `Grote Arcana (${ROMAN[c.n]}): een groot levensthema, niet zomaar een dagelijks voorval. Astrologisch verbonden met ${c.astroName}.`;
+  if(c.type==="minor") return `Numerologie: ${c.n} = <b>${NUM[c.n].t.toLowerCase()}</b> (${NUM[c.n].d}), in het element <b>${SUITS[c.suit].el.toLowerCase()}</b> (${SUITS[c.suit].theme}).`;
+  return `Hofkaart: dit kan een persoon zijn met deze eigenschappen, of een kant van jezelf die nu gevraagd wordt. ${COURT[c.rank].name}: ${COURT[c.rank].role}.`;
+}
+function positionText(c,rev,role){
+  const m=cardMeaning(c,rev);
+  let main;
+  if(role==="advice") main = rev ? `Pas op voor ${m.kw}. Herken je dat bij jezelf, dan is dat het punt om aan te werken.` : `Zet in op ${m.kw}. ${c.type==="major"?dot(c.up):""}`;
+  else if(role==="challenge" && !rev && POSITIVE.has(c.id)) main = `${dot(cap(m.text))} Een positieve kaart als uitdaging betekent vaak: te veel van het goede, of moeite om dit toe te laten.`;
+  else main = dot(cap(m.text));
+  const revNote = rev ? `<p class="muted"><i>Omgekeerd:</i> de energie van deze kaart is geblokkeerd, naar binnen gericht of (nog) niet volledig aanwezig. Rechtop zou ze betekenen: ${cardMeaning(c,false).kw}.</p>` : "";
+  return `<p>${main}</p>${revNote}<p class="muted">${cardContext(c)}</p>`;
+}
+function bar(label,n,total,color){
+  return `<div class="bar"><span>${label}</span><i><b style="width:${total?n/total*100:0}%;background:${color}"></b></i><span>${n}</span></div>`;
+}
+const EL_Q = {
+ Vuur:"Waar wil je écht voor gaan, en wat houdt je tegen om in actie te komen?",
+ Water:"Wat voel je hier eigenlijk bij, los van wat je ervan vindt?",
+ Lucht:"Welke gedachte of overtuiging kleurt hoe je dit ziet — en klopt die?",
+ Aarde:"Welke kleine, concrete stap kun je deze week zetten?"
+};
+const EL_COLOR={Vuur:"var(--vuur)",Water:"var(--water)",Lucht:"var(--lucht)",Aarde:"var(--aarde)"};
+
+function explainReading(){
+  const k=$("#rSpread").value, pos=currentPositions(), rows=readRows(), q=$("#rQuestion").value.trim();
+  const items=rows.map((r,i)=>({...r,label:k==="vrij"?(r.label||pos[i][0]):pos[i][0],role:pos[i][1],hint:pos[i][2],card:r.id?byId(r.id):null})).filter(x=>x.card);
+  const ids=items.map(x=>x.id), dup=ids.filter((x,i)=>ids.indexOf(x)!==i);
+  $("#rMsg").textContent = !items.length ? "Kies minstens één kaart." : (items.length<rows.length ? `Let op: ${rows.length-items.length} positie(s) zonder kaart worden overgeslagen. ` : "") + (dup.length?`Let op: ${byId(dup[0]).name} ligt er meer dan eens — in één deck kan dat niet.`:"");
+  if(!items.length) return;
+
+  const n=items.length;
+  const maj=items.filter(x=>x.card.type==="major"), crt=items.filter(x=>x.card.type==="court"), mins=items.filter(x=>x.card.type==="minor");
+  const revs=items.filter(x=>x.rev);
+  const elCount={Vuur:0,Water:0,Lucht:0,Aarde:0};
+  items.forEach(x=>{if(x.card.suit)elCount[SUITS[x.card.suit].el]++});
+  const suitTotal=Object.values(elCount).reduce((a,b)=>a+b,0);
+
+  let h=`<h2>Jouw lezing</h2>`;
+  if(q) h+=`<p><b>Vraag:</b> <i>${q.replace(/</g,"&lt;")}</i></p>`;
+  h+=`<p class="muted">${k==="vrij"?"Vrije legging":SPREADS[k].name} · ${n} kaart${n>1?"en":""}</p>`;
+  h+=`<div class="spreadview">${items.map(x=>`<div class="slot">${cardHTML(x.card,x.rev?"rev":"")}${x.label}</div>`).join("")}</div>`;
+
+  // per positie
+  h+=`<h3>Kaart voor kaart</h3>`;
+  items.forEach(x=>{
+    h+=`<div class="pos-ex"><div>${cardHTML(x.card,x.rev?"rev":"")}</div><div>
+      <h4>${x.label}: ${x.card.name}${x.rev?" (omgekeerd)":""}${x.hint?` <small>— ${x.hint}</small>`:""}</h4>
+      ${ROLE_INTRO[x.role]?`<p class="muted">${ROLE_INTRO[x.role]}</p>`:""}
+      ${positionText(x.card,x.rev,x.role)}</div></div>`;
+  });
+
+  // rode draad
+  if(n>1){
+    const first=items[0], last=items[n-1];
+    h+=`<h3>De rode draad</h3><p>`;
+    h+=`De lezing begint bij <b>${first.card.name}</b>${first.rev?" (omgekeerd)":""} — ${cardMeaning(first.card,first.rev).kw} — en komt uit bij <b>${last.card.name}</b>${last.rev?" (omgekeerd)":""} — ${cardMeaning(last.card,last.rev).kw}. `;
+    const ch=items.find(x=>x.role==="challenge");
+    if(ch) h+=`Wat daartussen staat, is <b>${ch.card.name}</b>: ${cardMeaning(ch.card,ch.rev).kw}. `;
+    const adv=items.find(x=>x.role==="advice");
+    if(adv) h+=`De sleutel ligt in <b>${adv.card.name}</b>${adv.rev?" (omgekeerd)":""}. `;
+    if(k==="keuze" && items.length===6){
+      const a=items.find(x=>x.label==="Uitkomst A"), b=items.find(x=>x.label==="Uitkomst B");
+      if(a&&b) h+=`Vergelijk de twee uitkomsten: optie A leidt naar <b>${a.card.name}</b> (${cardMeaning(a.card,a.rev).kw}), optie B naar <b>${b.card.name}</b> (${cardMeaning(b.card,b.rev).kw}). Welke voelt meer als jouw weg? `;
+    }
+    if(maj.length) h+=`De grote thema's in deze lezing zijn ${maj.map(x=>`<b>${x.card.name}</b>`).join(", ").replace(/, ([^,]*)$/," en $1")}.`;
+    h+=`</p>`;
+  }
+
+  // grote vs kleine arcana
+  h+=`<h3>Grote en Kleine Arcana</h3><div class="bars">${bar("Grote",maj.length,n,"var(--gold)")}${bar("Kleine",mins.length,n,"var(--muted)")}${bar("Hofkaarten",crt.length,n,"var(--gold2)")}</div><p>`;
+  if(maj.length/n>=.5) h+=`Meer dan de helft van de kaarten komt uit de Grote Arcana. Dit gaat over een belangrijke levensfase of les; er spelen krachten die groter zijn dan je dagelijkse keuzes.`;
+  else if(maj.length===0) h+=`Geen Grote Arcana: het gaat om alledaagse zaken die grotendeels in je eigen hand liggen.`;
+  else h+=`Een mengeling van grote thema's en dagelijkse situaties: de Grote Arcana geven de richting aan, de Kleine Arcana laten zien waar het in de praktijk speelt.`;
+  if(crt.length>=2) h+=` Er liggen ${crt.length} hofkaarten: er zijn waarschijnlijk meerdere mensen bij betrokken, of verschillende kanten van jezelf.`;
+  h+=`</p>`;
+
+  // elementen
+  if(suitTotal){
+    const sorted=Object.entries(elCount).sort((a,b)=>b[1]-a[1]);
+    const missing=Object.entries(elCount).filter(e=>!e[1]).map(e=>e[0]);
+    h+=`<h3>Elementen</h3><div class="bars">${Object.entries(elCount).map(([e,v])=>bar(e,v,suitTotal,EL_COLOR[e])).join("")}</div><p>`;
+    if(sorted[0][1]>sorted[1][1]){
+      const d=sorted[0][0], s=Object.values(SUITS).find(x=>x.el===d);
+      h+=`<b>${d}</b> (${s.name}) overheerst: de lezing gaat vooral over ${s.theme}. `;
+    } else h+=`Geen enkel element overheerst; de vraag raakt meerdere levensgebieden. `;
+    if(missing.length && suitTotal>=3){
+      const tips={Vuur:"passie en daadkracht",Water:"gevoel en verbinding",Lucht:"helder denken en communicatie",Aarde:"praktische zaken en het lichaam"};
+      h+=`Er ontbreekt ${missing.map(m=>`<b>${m.toLowerCase()}</b>`).join(" en ")}: ${missing.map(m=>tips[m]).join(" en ")} krijgen in deze situatie weinig aandacht. Misschien is dat juist wat er nodig is.`;
+    }
+    h+=`</p>`;
+  }
+
+  // numerologie
+  const nums=[...mins.map(x=>x.card.n), ...maj.filter(x=>x.card.n>=1&&x.card.n<=10).map(x=>x.card.n)];
+  const freq={}; nums.forEach(v=>freq[v]=(freq[v]||0)+1);
+  const reps=Object.entries(freq).filter(e=>e[1]>=2).sort((a,b)=>b[1]-a[1]);
+  h+=`<h3>Numerologie</h3><p>`;
+  if(reps.length) reps.forEach(([v,c])=>{h+=`Het getal <b>${v}</b> komt ${c}× voor: <b>${NUM[v].t.toLowerCase()}</b> — ${NUM[v].d}. Dat thema wordt in deze lezing extra benadrukt. `});
+  if(mins.length>=2){
+    const avg=mins.reduce((a,x)=>a+x.card.n,0)/mins.length;
+    h+= avg<=3.5 ? `De Kleine Arcana hebben vooral lage getallen: je staat aan het <b>begin</b> van iets; er is nog veel open.`
+      : avg<=6.5 ? `De Kleine Arcana zitten rond het midden: je zit <b>midden in het proces</b>, met de groei en de wrijving die daarbij horen.`
+      : `De Kleine Arcana hebben vooral hoge getallen: een fase loopt naar zijn <b>afronding</b>; er wordt geoogst of afgesloten.`;
+  } else if(!reps.length) h+=`Er zijn geen herhaalde getallen; geen numerologisch thema springt eruit.`;
+  h+=`</p>`;
+
+  // omgekeerd
+  if(n>1){
+    h+=`<h3>Omgekeerde kaarten</h3><p>${revs.length} van de ${n} kaarten liggen omgekeerd. `;
+    h+= revs.length===0 ? `De energie stroomt vrij; wat de kaarten laten zien, speelt zich openlijk af.`
+      : revs.length/n>=.5 ? `Dat is veel: er is sprake van blokkades, vertraging of een proces dat vooral innerlijk plaatsvindt. Kijk wat je tegenhoudt.`
+      : `Op ${revs.map(x=>x.label.replace(/^\d+\.\s*/,"").toLowerCase()).join(", ")} stokt de energie wat; daar zit het werk.`;
+    h+=`</p>`;
+  }
+
+  // kwintessens
+  const counted=[...maj, ...mins];
+  const sum=counted.reduce((a,x)=>a+x.card.n,0);
+  if(counted.length>=2 && sum>0){
+    let v=sum; const steps=[];
+    while(v>22){const r=reduce(v);steps.push(`${String(v).split("").join("+")} = ${r}`);v=r}
+    if(v===22) v=0;
+    const qc=MAJOR[v];
+    h+=`<h3>Kwintessens</h3><p class="muted">De som van alle kaartnummers (hofkaarten tellen niet mee): ${counted.map(x=>x.card.n).join(" + ")} = ${sum}${steps.length?" → "+steps.join(" → "):""}${sum===22?" → De Dwaas":""}.</p>`;
+    h+=`<div style="display:flex;gap:16px;align-items:center"><div class="slot" style="width:84px">${cardHTML({...qc,id:"major-"+qc.n,type:"major"})}</div><p><b>${qc.name}</b> is de kwintessens: de onderliggende les van de hele lezing. ${qc.up}</p></div>`;
+  }
+
+  // reflectie
+  const dom = suitTotal ? Object.entries(elCount).sort((a,b)=>b[1]-a[1])[0][0] : null;
+  h+=`<h3>Om over na te denken</h3><ul class="sym">`;
+  if(dom) h+=`<li>${EL_Q[dom]}</li>`;
+  const out=items.find(x=>x.role==="outcome"||x.role==="future");
+  if(out) h+=`<li>Wat zou er moeten veranderen als de uitkomst (${out.card.name}) niet is wat je wilt?</li>`;
+  const ch=items.find(x=>x.role==="challenge");
+  if(ch) h+=`<li>Hoe zie je ${ch.card.name} terug in je dagelijks leven?</li>`;
+  h+=`<li>Welke kaart raakt je het meest — en waarom juist die?</li></ul>`;
+  h+=`<p class="muted" style="font-size:.85rem">Deze uitleg is automatisch samengesteld uit de traditionele betekenissen. Tarot is een spiegel voor reflectie, geen vaststaande voorspelling. Jouw eigen gevoel bij de kaarten weegt het zwaarst.</p>`;
+  h+=`<div class="btnrow"><button onclick="copyReading()">📋 Kopieer tekst</button><button onclick="window.print()">🖨️ Print / PDF</button><button onclick="shareReading()">🔗 Kopieer deellink</button><span id="copyMsg" class="muted" style="align-self:center"></span></div>`;
+
+  $("#readingOut").innerHTML=h; $("#readingOut").style.display="block";
+  window.scrollTo({top:$("#readingOut").offsetTop-70,behavior:"smooth"});
+}
+$("#rExplain").onclick=explainReading;
+
+function flash(t){const m=$("#copyMsg");if(m){m.textContent=t;setTimeout(()=>m.textContent="",2500)}}
+function copyText(t,msg){
+  if(navigator.clipboard) navigator.clipboard.writeText(t).then(()=>flash(msg),()=>flash("Kopiëren lukte niet."));
+  else { const a=document.createElement("textarea");a.value=t;document.body.appendChild(a);a.select();try{document.execCommand("copy");flash(msg)}catch(e){};a.remove(); }
+}
+function copyReading(){
+  const clone=$("#readingOut").cloneNode(true); clone.querySelectorAll(".card,.btnrow,.spreadview,.bars").forEach(e=>e.remove());
+  copyText(clone.innerText.replace(/\n{3,}/g,"\n\n").trim(),"Tekst gekopieerd ✓");
+}
+function shareReading(){
+  const k=$("#rSpread").value, rows=readRows();
+  const p=new URLSearchParams();
+  p.set("s",k); p.set("c",rows.map(r=>(r.id||"-")+(r.rev?".r":"")).join(","));
+  if(k==="vrij") p.set("l",rows.map(r=>r.label||"").join("|"));
+  const q=$("#rQuestion").value.trim(); if(q) p.set("q",q);
+  copyText(location.origin+location.pathname+"?"+p.toString()+"#lezing","Link gekopieerd ✓");
+}
+function loadSharedReading(){
+  const p=new URLSearchParams(location.search);
+  if(!p.get("c")) return false;
+  const k=SPREADS[p.get("s")]?p.get("s"):"vrij";
+  const cards=p.get("c").split(","), labels=(p.get("l")||"").split("|");
+  $("#rSpread").value=k;
+  if(k==="vrij") $("#rCount").value=cards.length;
+  $("#rQuestion").value=p.get("q")||"";
+  renderRows(cards.map((c,i)=>{const [id,r]=c.split(".");return {id:byId(id)?id:"",rev:r==="r",label:labels[i]}}));
+  explainReading();
+  return true;
+}
+renderRows([]);
+
 /* ===================== NAVIGATIE ===================== */
 function go(p){
   document.querySelectorAll("section.page").forEach(s=>s.classList.toggle("show",s.id===p));
@@ -439,7 +874,9 @@ function go(p){
 }
 document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>go(b.dataset.page));
 renderDeck("major"); renderStatic(); renderStats();
-const h=location.hash.slice(1); if(h&&document.getElementById(h)) go(h);
+const h=location.hash.slice(1);
+if(loadSharedReading()) go("lezing");
+else if(h&&document.getElementById(h)) go(h);
 </script>
 </body>
 </html>
