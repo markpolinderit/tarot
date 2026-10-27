@@ -146,6 +146,10 @@ details.aiset summary{cursor:pointer;font-weight:600;color:var(--gold2)}
 .typing::after{content:"▍";animation:blink 1s infinite;color:var(--gold2)}
 @keyframes blink{50%{opacity:0}}
 .aiask{display:flex;gap:8px;margin-top:10px}.aiask input{flex:1;min-width:0}
+.langsw{position:absolute;top:12px;right:16px;z-index:30;display:flex;gap:2px;padding:3px;background:var(--panel);border:1px solid var(--line);border-radius:999px}
+.langsw button{padding:4px 11px;font-size:.82rem;border:none;background:transparent;color:var(--muted)}
+.langsw button.active{background:linear-gradient(135deg,var(--gold),#b8893a);color:#1a1430}
+@media(max-width:640px){header.wrap{padding-top:50px}}
 #histPanel{margin-top:18px;padding:14px 20px}
 #histPanel summary{cursor:pointer;font-weight:600;color:var(--gold2)}
 details.hf{margin-top:10px}
@@ -160,44 +164,94 @@ details.hf details.hf{margin-left:18px}
 .hist .hb{display:flex;gap:6px;flex:0 0 auto}
 .hist .hb button{padding:5px 12px;font-size:.88rem}
 @media(max-width:640px){.hist li{flex-direction:column;align-items:stretch}}
+/* responsive: niets breder dan het scherm, compacter op telefoons */
+img,svg,select,input,textarea{max-width:100%}
+.aigrid>*,.posrow>*,.pos-ex>div,.hist>li,.hist .hi{min-width:0}
+.hist{grid-template-columns:minmax(0,1fr)}
+.pos-ex,.msg,.explain,.qtext,.opt{overflow-wrap:anywhere}
+.panel:has(>table){overflow-x:auto;-webkit-overflow-scrolling:touch}
+nav .wrap{scrollbar-width:none}nav .wrap::-webkit-scrollbar{display:none}
+@media(max-width:640px){
+  h1{font-size:1.9rem} h2{font-size:1.5rem} h3{font-size:1.2rem}
+  header p{font-size:.92rem}
+  nav button{padding:7px 12px;font-size:.92rem}
+  section.page{padding:16px 0 40px}
+  .panel{padding:14px;border-radius:14px}
+  #histPanel{padding:12px 14px}
+  .revlab{white-space:normal}
+  th,td{padding:7px 6px;font-size:.9rem}
+  .modal{padding:12px 8px}
+  .modal .box{padding:18px 14px}
+  .qtext{font-size:1.35rem}
+  .qcard{width:76px}
+  .score{font-size:2.6rem}
+  .pos-ex{grid-template-columns:60px 1fr;gap:12px}
+  .msg{padding:10px 12px}.msg.me{margin-left:6%}
+  .aiask{flex-wrap:wrap}.aiask button{flex:1 0 100%}
+  .bar{grid-template-columns:76px 1fr 22px}
+  .flip{width:84px}
+  .grid{grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:10px}
+  .stats{gap:10px}.stats div{padding:8px 12px}
+  details.hf details.hf{margin-left:10px}
+  .hist{margin-left:8px}
+  /* tabellen: elke rij wordt een blok met de kolomnaam als label */
+  .panel:has(>table){overflow-x:visible}
+  .panel>table tr:first-child{display:none}
+  .panel>table tr{display:block;padding:8px 0;border-bottom:1px solid var(--line)}
+  .panel>table tr:last-child{border-bottom:none}
+  .panel>table td{display:block;border:none;padding:2px 0}
+  .panel>table td[data-l]::before{content:attr(data-l);display:block;font-size:.75rem;color:var(--gold2);text-transform:uppercase;letter-spacing:.04em}
+  .panel>table td:first-child::before{display:none}
+  .panel>table td:first-child{font-size:1.02rem}
+}
+@media(max-width:380px){
+  .flip,.spreadview .slot{width:72px}
+  .posrow{grid-template-columns:1fr}
+  .revlab{justify-self:start}
+}
 @media print{nav,header,footer,#readingForm,#histPanel,.btnrow,#aiStart,#aiAsk{display:none!important}body{background:#fff;color:#000}.panel{border:none}.reading *{color:#000!important}}
 </style>
 </head>
 <body>
+<div class="langsw" role="group" aria-label="Taal / Language / Sprache">
+  <button data-lang="nl" lang="nl" aria-label="Nederlands">NL</button>
+  <button data-lang="en" lang="en" aria-label="English">EN</button>
+  <button data-lang="de" lang="de" aria-label="Deutsch">DE</button>
+</div>
 <header class="wrap">
   <h1>✦ Tarot ✦</h1>
-  <p>Leer de 78 kaarten kennen: hun betekenis, symbolen, getallen en elementen — en test jezelf.</p>
+  <p data-t="hdr.sub">Leer de 78 kaarten kennen: hun betekenis, symbolen, getallen en elementen — en test jezelf.</p>
 </header>
 <nav><div class="wrap">
-  <button data-page="lezing" class="active">🔮 Legging</button>
-  <button data-page="num">🔢 Numerologie</button>
-  <button data-page="sym">✶ Symboliek & elementen</button>
-  <button data-page="geboorte">🌙 Geboortekaart</button>
-  <button data-page="leren">📖 Kaarten</button>
-  <button data-page="test">🎴 Kaarten Leren</button>
+  <button data-page="lezing" class="active" data-t="nav.lezing">🔮 Legging</button>
+  <button data-page="num" data-t="nav.num">🔢 Numerologie</button>
+  <button data-page="sym" data-t="nav.sym">✶ Symboliek & elementen</button>
+  <button data-page="geboorte" data-t="nav.geboorte">🌙 Geboortekaart</button>
+  <button data-page="leren" data-t="nav.leren">📖 Kaarten</button>
+  <button data-page="test" data-t="nav.test">🎴 Kaarten Leren</button>
 </div></nav>
 
 <main class="wrap">
 <!-- TEST -->
 <section class="page" id="test">
   <div id="quizSetup" class="panel quiz-setup">
-    <h2>Test je kennis</h2>
-    <p class="muted">Kies onderwerpen en lengte. Kaarten die je fout beantwoordt komen vaker terug.</p>
+    <h2 data-t="test.h">Test je kennis</h2>
+    <p class="muted" data-t="test.intro">Kies onderwerpen en lengte. Kaarten die je fout beantwoordt komen vaker terug.</p>
     <div class="cols">
       <div>
-        <label><input type="checkbox" value="major" checked> <span><b>Grote Arcana</b><br><span class="muted">betekenissen van de 22 trumpkaarten</span></span></label>
-        <label><input type="checkbox" value="minor" checked> <span><b>Kleine Arcana</b><br><span class="muted">Aas t/m 10 van de vier kleuren</span></span></label>
-        <label><input type="checkbox" value="court"> <span><b>Hofkaarten</b><br><span class="muted">Schildknaap, Ridder, Koningin, Koning</span></span></label>
+        <label><input type="checkbox" value="major" checked> <span data-t="test.major"><b>Grote Arcana</b><br><span class="muted">betekenissen van de 22 trumpkaarten</span></span></label>
+        <label><input type="checkbox" value="minor" checked> <span data-t="test.minor"><b>Kleine Arcana</b><br><span class="muted">Aas t/m 10 van de vier kleuren</span></span></label>
+        <label><input type="checkbox" value="court"> <span data-t="test.court"><b>Hofkaarten</b><br><span class="muted">Schildknaap, Ridder, Koningin, Koning</span></span></label>
       </div>
       <div>
-        <label><input type="checkbox" value="symbol" checked> <span><b>Symboliek</b><br><span class="muted">beelden, kleuren en hun betekenis</span></span></label>
-        <label><input type="checkbox" value="numero" checked> <span><b>Numerologie</b><br><span class="muted">getallen, reductie en rangorde</span></span></label>
-        <label><input type="checkbox" value="element"> <span><b>Elementen & astrologie</b><br><span class="muted">vuur, water, lucht, aarde en tekens</span></span></label>
+        <label><input type="checkbox" value="symbol" checked> <span data-t="test.symbol"><b>Symboliek</b><br><span class="muted">beelden, kleuren en hun betekenis</span></span></label>
+        <label><input type="checkbox" value="numero" checked> <span data-t="test.numero"><b>Numerologie</b><br><span class="muted">getallen, reductie en rangorde</span></span></label>
+        <label><input type="checkbox" value="element"> <span data-t="test.element"><b>Elementen & astrologie</b><br><span class="muted">vuur, water, lucht, aarde en tekens</span></span></label>
       </div>
     </div>
-    <p style="margin-top:14px">Aantal vragen:
+    <p style="margin-top:14px"><span data-t="test.len">Aantal vragen:</span>
       <select id="qLen"><option>10</option><option selected>20</option><option>30</option><option>50</option></select>
-      &nbsp;<button class="primary" id="startQuiz">Start de test</button>
+      &nbsp;<button class="primary" id="startQuiz" data-t="test.start">Start de test</button>
     </p>
     <div class="stats" id="statBox"></div>
   </div>
@@ -206,14 +260,14 @@ details.hf details.hf{margin-left:18px}
 
 <!-- LEREN -->
 <section class="page" id="leren">
-  <h2>De 78 kaarten</h2>
-  <p class="muted">Tik op een kaart voor betekenis, symbolen en numerologie.</p>
+  <h2 data-t="leren.h">De 78 kaarten</h2>
+  <p class="muted" data-t="leren.intro">Tik op een kaart voor betekenis, symbolen en numerologie.</p>
   <div class="tabs" id="deckTabs">
-    <button data-f="major" class="active">Grote Arcana</button>
-    <button data-f="staven">Staven</button>
-    <button data-f="bekers">Bekers</button>
-    <button data-f="zwaarden">Zwaarden</button>
-    <button data-f="pentakels">Pentakels</button>
+    <button data-f="major" class="active" data-t="tab.major">Grote Arcana</button>
+    <button data-f="staven" data-t="tab.staven">Staven</button>
+    <button data-f="bekers" data-t="tab.bekers">Bekers</button>
+    <button data-f="zwaarden" data-t="tab.zwaarden">Zwaarden</button>
+    <button data-f="pentakels" data-t="tab.pentakels">Pentakels</button>
   </div>
   <div id="deckIntro" class="muted" style="margin-bottom:14px"></div>
   <div class="grid" id="deckGrid"></div>
@@ -221,81 +275,81 @@ details.hf details.hf{margin-left:18px}
 
 <!-- NUMEROLOGIE -->
 <section class="page" id="num">
-  <h2>Numerologie in de tarot</h2>
-  <p>Elk getal heeft een eigen energie. In de Kleine Arcana vertelt het <b>getal</b> je <i>wat</i> er gebeurt, de <b>kleur</b> (het element) vertelt <i>waar</i> het speelt. Een Vijf is altijd een moment van onrust — bij Bekers in je gevoel, bij Pentakels in je financiën.</p>
+  <h2 data-t="num.h">Numerologie in de tarot</h2>
+  <p data-t="num.intro">Elk getal heeft een eigen energie. In de Kleine Arcana vertelt het <b>getal</b> je <i>wat</i> er gebeurt, de <b>kleur</b> (het element) vertelt <i>waar</i> het speelt. Een Vijf is altijd een moment van onrust — bij Bekers in je gevoel, bij Pentakels in je financiën.</p>
   <div class="panel" style="margin:18px 0"><table id="numTable"></table></div>
-  <h3>De Narrenreis: drie rijen van zeven</h3>
-  <p class="muted">De Dwaas (0) reist door de Grote Arcana. Leg je kaart I t/m XXI in drie rijen, dan zie je drie fasen van groei.</p>
+  <h3 data-t="num.rows.h">De Narrenreis: drie rijen van zeven</h3>
+  <p class="muted" data-t="num.rows.p">De Dwaas (0) reist door de Grote Arcana. Leg je kaart I t/m XXI in drie rijen, dan zie je drie fasen van groei.</p>
   <div id="rows7"></div>
-  <h3>Reductie: verwante kaarten</h3>
-  <p class="muted">Tel de cijfers van een kaartnummer op (theosofische reductie) en je vindt de "wortel". Zo is De Toren (16 → 1+6 = 7) een hogere octaaf van De Zegewagen (7): waar de wagen bouwt met wilskracht, breekt de toren af wat niet klopt.</p>
+  <h3 data-t="num.red.h">Reductie: verwante kaarten</h3>
+  <p class="muted" data-t="num.red.p">Tel de cijfers van een kaartnummer op (theosofische reductie) en je vindt de "wortel". Zo is De Toren (16 → 1+6 = 7) een hogere octaaf van De Zegewagen (7): waar de wagen bouwt met wilskracht, breekt de toren af wat niet klopt.</p>
   <div class="panel" id="reduct"></div>
 </section>
 
 <!-- SYMBOLIEK -->
 <section class="page" id="sym">
-  <h2>Symboliek & elementen</h2>
-  <h3>De vier kleuren</h3>
+  <h2 data-t="sym.h">Symboliek & elementen</h2>
+  <h3 data-t="sym.suits">De vier kleuren</h3>
   <div class="cols" id="suitInfo"></div>
-  <h3 style="margin-top:24px">Hofkaarten</h3>
-  <p class="muted">Elke rang heeft (in de Golden Dawn-traditie) een eigen element. Een hofkaart combineert dat met het element van de kleur: de Koningin van Staven is "water van vuur" — warme, gevoelde passie.</p>
+  <h3 style="margin-top:24px" data-t="sym.court.h">Hofkaarten</h3>
+  <p class="muted" data-t="sym.court.p">Elke rang heeft (in de Golden Dawn-traditie) een eigen element. Een hofkaart combineert dat met het element van de kleur: de Koningin van Staven is "water van vuur" — warme, gevoelde passie.</p>
   <div class="panel"><table id="courtTable"></table></div>
-  <h3 style="margin-top:24px">Kleuren in de afbeeldingen</h3>
+  <h3 style="margin-top:24px" data-t="sym.colors">Kleuren in de afbeeldingen</h3>
   <div class="panel"><table id="colorTable"></table></div>
-  <h3 style="margin-top:24px">Terugkerende symbolen</h3>
+  <h3 style="margin-top:24px" data-t="sym.symbols">Terugkerende symbolen</h3>
   <div class="panel"><table id="symTable"></table></div>
 </section>
 
 <!-- LEZING -->
 <section class="page show" id="lezing">
-  <h2>Lezing uitleggen</h2>
-  <p class="muted">Vul je vraag in, kies de legging en geef aan welke kaarten er op elke positie liggen. Je krijgt een uitleg per positie en een uitleg van de lezing als geheel: elementen, numerologie, terugkerende thema's en de kwintessens.</p>
+  <h2 data-t="lez.h">Lezing uitleggen</h2>
+  <p class="muted" data-t="lez.intro">Vul je vraag in, kies de legging en geef aan welke kaarten er op elke positie liggen. Je krijgt een uitleg per positie en een uitleg van de lezing als geheel: elementen, numerologie, terugkerende thema's en de kwintessens.</p>
   <div class="panel" id="readingForm">
-    <div class="field"><label for="rQuestion">Je vraag (optioneel)</label>
-      <textarea id="rQuestion" placeholder="Bijv. Hoe kan ik het beste omgaan met de verandering in mijn werk?"></textarea></div>
-    <div class="field"><label for="rSpread">Legging</label>
+    <div class="field"><label for="rQuestion" data-t="lez.q">Je vraag (optioneel)</label>
+      <textarea id="rQuestion" data-tp placeholder="Bijv. Hoe kan ik het beste omgaan met de verandering in mijn werk?"></textarea></div>
+    <div class="field"><label for="rSpread" data-t="lez.spread">Legging</label>
       <select id="rSpread"></select>
-      <span id="freeCount" style="display:none">&nbsp; aantal kaarten <input type="number" id="rCount" min="1" max="15" value="4" style="width:80px"></span>
+      <span id="freeCount" style="display:none">&nbsp; <span data-t="lez.count">aantal kaarten</span> <input type="number" id="rCount" min="1" max="15" value="4" style="width:80px"></span>
     </div>
     <div id="spreadDesc" class="muted" style="margin-bottom:6px"></div>
     <div id="posRows"></div>
     <div id="drawView" class="drawview" style="display:none"></div>
     <div class="btnrow">
-      <button class="primary" id="rExplain">🔮 Leg de lezing uit</button>
-      <button id="rRandom">Trek willekeurig</button>
-      <button id="rClear">Leegmaken</button>
+      <button class="primary" id="rExplain" data-t="lez.explain">🔮 Leg de lezing uit</button>
+      <button id="rRandom" data-t="lez.random">Trek willekeurig</button>
+      <button id="rClear" data-t="lez.clear">Leegmaken</button>
     </div>
     <div id="rMsg" class="warn" style="margin-top:10px"></div>
     <details class="aiset" id="aiSettings">
-      <summary>✨ AI-uitleg instellen <span id="aiBadge" class="muted" style="font-weight:400"></span></summary>
-      <p class="muted" style="font-size:.9rem">Met een eigen <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener">Anthropic API-sleutel</a> schrijft Claude een persoonlijke uitleg bij je lezing, en kun je doorvragen. De sleutel gaat rechtstreeks van jouw browser naar Anthropic en wordt nergens anders opgeslagen. Elke uitleg kost een klein bedrag van je API-tegoed. Op een gedeelde computer: vink "onthouden" uit of klik na afloop op "Vergeet sleutel".</p>
+      <summary><span data-t="ai.set">✨ AI-uitleg instellen</span> <span id="aiBadge" class="muted" style="font-weight:400"></span></summary>
+      <p class="muted" style="font-size:.9rem" data-t="ai.info">Met een eigen <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener">Anthropic API-sleutel</a> schrijft Claude een persoonlijke uitleg bij je lezing, en kun je doorvragen. De sleutel gaat rechtstreeks van jouw browser naar Anthropic en wordt nergens anders opgeslagen. Elke uitleg kost een klein bedrag van je API-tegoed. Op een gedeelde computer: vink "onthouden" uit of klik na afloop op "Vergeet sleutel".</p>
       <div class="aigrid">
-        <input type="password" id="aiKey" placeholder="sk-ant-…" autocomplete="off" spellcheck="false" aria-label="API-sleutel">
+        <input type="password" id="aiKey" placeholder="sk-ant-…" autocomplete="off" spellcheck="false" aria-label="API-sleutel" data-ta>
         <select id="aiModel" aria-label="Model">
-          <option value="claude-sonnet-5-5">Claude Sonnet 5.5 (aanbevolen)</option>
-          <option value="claude-opus-5-5">Claude Opus 5.5 (diepgaandst)</option>
-          <option value="claude-haiku-5-5">Claude Haiku 5.5 (snelst, goedkoopst)</option>
+          <option value="claude-sonnet-5-5" data-t="ai.m.sonnet">Claude Sonnet 5.5 (aanbevolen)</option>
+          <option value="claude-opus-5-5" data-t="ai.m.opus">Claude Opus 5.5 (diepgaandst)</option>
+          <option value="claude-haiku-5-5" data-t="ai.m.haiku">Claude Haiku 5.5 (snelst, goedkoopst)</option>
         </select>
       </div>
-      <label class="revlab"><input type="checkbox" id="aiRemember" checked> Sleutel onthouden op dit apparaat</label>
-      <div class="btnrow" style="margin-top:10px"><button id="aiSave" class="primary">Opslaan</button><button id="aiForget">Vergeet sleutel</button><span id="aiStatus" class="muted" style="align-self:center"></span></div>
+      <label class="revlab"><input type="checkbox" id="aiRemember" checked> <span data-t="ai.remember">Sleutel onthouden op dit apparaat</span></label>
+      <div class="btnrow" style="margin-top:10px"><button id="aiSave" class="primary" data-t="ai.save">Opslaan</button><button id="aiForget" data-t="ai.forget">Vergeet sleutel</button><span id="aiStatus" class="muted" style="align-self:center"></span></div>
     </details>
   </div>
   <div id="readingOut" class="panel reading" style="display:none;margin-top:18px"></div>
   <details class="panel" id="histPanel">
-    <summary>📜 Eerdere leggingen <span id="histCount" class="muted" style="font-weight:400"></span></summary>
-    <p class="muted" style="font-size:.9rem;margin:8px 0 0">Elke legging die je laat uitleggen wordt bewaard in deze browser, op dit apparaat, inclusief de AI-uitleg. Er gaat niets naar een server.</p>
+    <summary><span data-t="hist.h">📜 Eerdere leggingen</span> <span id="histCount" class="muted" style="font-weight:400"></span></summary>
+    <p class="muted" style="font-size:.9rem;margin:8px 0 0" data-t="hist.info">Elke legging die je laat uitleggen wordt bewaard in deze browser, op dit apparaat, inclusief de AI-uitleg. Er gaat niets naar een server.</p>
     <div id="histList"></div>
-    <div class="btnrow" id="histTools" style="margin-top:12px"><button id="histClear">Alles wissen</button></div>
+    <div class="btnrow" id="histTools" style="margin-top:12px"><button id="histClear" data-t="hist.clear">Alles wissen</button></div>
   </details>
 </section>
 
 <!-- GEBOORTEKAART -->
 <section class="page" id="geboorte">
-  <h2>Jouw geboortekaart</h2>
-  <p>Tel dag, maand en jaar van je geboortedatum op, en tel daarna de cijfers van de uitkomst bij elkaar tot je op 22 of lager uitkomt. Dat is je <b>persoonlijkheidskaart</b>; reduceer je verder tot één cijfer, dan vind je je <b>zielskaart</b>.</p>
+  <h2 data-t="geb.h">Jouw geboortekaart</h2>
+  <p data-t="geb.intro">Tel dag, maand en jaar van je geboortedatum op, en tel daarna de cijfers van de uitkomst bij elkaar tot je op 22 of lager uitkomt. Dat is je <b>persoonlijkheidskaart</b>; reduceer je verder tot één cijfer, dan vind je je <b>zielskaart</b>.</p>
   <div class="panel">
-    <input type="date" id="bdate"> <button class="primary" id="calcBirth">Bereken</button>
+    <input type="date" id="bdate"> <button class="primary" id="calcBirth" data-t="geb.calc">Bereken</button>
     <div id="birthOut" style="margin-top:18px"></div>
   </div>
 </section>
@@ -303,9 +357,49 @@ details.hf details.hf{margin-left:18px}
 
 <div class="modal" id="modal"><div class="box"><button class="close" onclick="closeModal()">✕</button><div id="modalBody"></div></div></div>
 
-<footer>Kaartbeschrijvingen volgen de Rider-Waite-Smith-traditie. Tarot is een hulpmiddel voor reflectie, geen voorspelling.</footer>
+<footer data-t="footer">Kaartbeschrijvingen volgen de Rider-Waite-Smith-traditie. Tarot is een hulpmiddel voor reflectie, geen voorspelling.</footer>
 
+<script src="i18n/en.js"></script>
+<script src="i18n/de.js"></script>
 <script>
+/* ===================== TAAL ===================== */
+const LOCALES={nl:"nl-NL",en:"en-GB",de:"de-DE"};
+const LANG=(()=>{
+  try{ const s=JSON.parse(localStorage.getItem("tarot-lang")); if(LOCALES[s]) return s; }catch(e){}
+  const b=(navigator.language||"").slice(0,2).toLowerCase(); return LOCALES[b]?b:"nl";
+})();
+const LOC=LOCALES[LANG], TL=(window.TR||{})[LANG]||{}, MISS=new Set();
+// t("Nederlandse tekst {x}",{x}): vertaling uit i18n/<taal>.js met het Nederlands als sleutel; "tekst|context" voor dubbelzinnige woorden
+function t(s,v){
+  let r=s.split("|")[0];
+  if(LANG!=="nl"){ const x=TL.ui&&TL.ui[s]; if(x===undefined) MISS.add(s); else r=x; }
+  return v ? r.replace(/\{(\w+)\}/g,(m,k)=>k in v?v[k]:m) : r;
+}
+// Duitse zelfstandige naamwoorden houden hun hoofdletter
+const lc = s=>LANG==="de"?s:s.toLowerCase();
+// vertaalde data over de Nederlandse heen leggen; arrays worden in place vervangen zodat de const-verwijzingen blijven kloppen
+function overlay(base,tr){
+  if(!tr) return;
+  for(const k in tr){
+    const b=base[k], v=tr[k];
+    if(Array.isArray(v)&&Array.isArray(b)){
+      if(v.some(x=>x&&typeof x==="object"&&!Array.isArray(x))) v.forEach((x,i)=>overlay(b[i],x));
+      else b.splice(0,b.length,...v);
+    } else if(v&&typeof v==="object"&&b&&typeof b==="object") overlay(b,v);
+    else base[k]=v;
+  }
+}
+function applyStatic(){
+  document.documentElement.lang=LANG;
+  document.querySelectorAll(".langsw button").forEach(b=>b.classList.toggle("active",b.dataset.lang===LANG));
+  if(LANG==="nl") return;
+  const H=TL.html||{};
+  document.querySelectorAll("[data-t]").forEach(e=>{ const x=H[e.dataset.t]; if(x===undefined) MISS.add("html:"+e.dataset.t); else e.innerHTML=x; });
+  document.querySelectorAll("[data-tp]").forEach(e=>e.placeholder=t(e.placeholder));
+  document.querySelectorAll("[data-ta]").forEach(e=>e.setAttribute("aria-label",t(e.getAttribute("aria-label"))));
+  const md=document.querySelector('meta[name="description"]'); md.content=t(md.content);
+}
+
 /* ===================== DATA ===================== */
 const VS = "\uFE0E"; // tekstweergave i.p.v. emoji
 const ROMAN = ["0","I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII","XIII","XIV","XV","XVI","XVII","XVIII","XIX","XX","XXI"];
@@ -419,11 +513,13 @@ const SYMBOLS = [
 
 /* ---------- deck opbouwen ---------- */
 const RANKN = ["Aas","Twee","Drie","Vier","Vijf","Zes","Zeven","Acht","Negen","Tien"];
+Object.values(SUITS).forEach(s=>s.ek=s.el); // vaste (Nederlandse) elementsleutel voor tellingen, los van de taal
+overlay({MAJOR,NUM,SUITS,MINOR,MINSYM,COURT,COURTM,COLORS,SYMBOLS,RANKN},TL.data);
 const DECK = [];
 MAJOR.forEach(m=>DECK.push({...m,id:"major-"+m.n,type:"major"}));
 Object.keys(SUITS).forEach(s=>{
-  for(let i=1;i<=10;i++) DECK.push({id:s+"-"+i,type:"minor",suit:s,n:i,name:RANKN[i-1]+" van "+SUITS[s].name,kw:MINOR[s][i-1],scene:MINSYM[s+"-"+i]});
-  ["S","R","Q","K"].forEach(r=>DECK.push({id:s+"-"+r,type:"court",suit:s,rank:r,name:COURT[r].name+" van "+SUITS[s].name,kw:COURTM[s][r]}));
+  for(let i=1;i<=10;i++) DECK.push({id:s+"-"+i,type:"minor",suit:s,n:i,name:t("{r} van {s}",{r:RANKN[i-1],s:SUITS[s].name}),kw:MINOR[s][i-1],scene:MINSYM[s+"-"+i]});
+  ["S","R","Q","K"].forEach(r=>DECK.push({id:s+"-"+r,type:"court",suit:s,rank:r,name:t("{r} van {s}",{r:COURT[r].name,s:SUITS[s].name}),kw:COURTM[s][r]}));
 });
 const byId = id=>DECK.find(c=>c.id===id);
 
@@ -471,64 +567,64 @@ function mc(correct,pool){
 const majors = DECK.filter(c=>c.type==="major");
 const minors = DECK.filter(c=>c.type==="minor");
 const courts = DECK.filter(c=>c.type==="court");
-const numExplain = c=>`Numerologie: ${c.n===1?"de Aas (1)":"de "+c.n} staat voor <b>${NUM[c.n].t.toLowerCase()}</b> (${NUM[c.n].d}); ${SUITS[c.suit].name} = <b>${SUITS[c.suit].el}</b> (${SUITS[c.suit].theme}).`;
+const numExplain = c=>t("Numerologie: {n} staat voor <b>{t}</b> ({d}); {s} = <b>{e}</b> ({th}).",{n:c.n===1?t("de Aas (1)"):t("de {n}",{n:c.n}),t:lc(NUM[c.n].t),d:NUM[c.n].d,s:SUITS[c.suit].name,e:SUITS[c.suit].el,th:SUITS[c.suit].theme});
 
 const GEN = {
  major:[
   ()=>{const c=weightedPick(majors);const opts=mc(c.kw,majors.map(m=>m.kw));
-   return {card:c,id:c.id,q:`Wat is de kernbetekenis van <b>${c.name}</b>?`,opts,ans:c.kw,ex:`${c.up}<br><i>Omgekeerd:</i> ${c.rev}`}},
+   return {card:c,id:c.id,q:t("Wat is de kernbetekenis van <b>{c}</b>?",{c:c.name}),opts,ans:c.kw,ex:`${c.up}<br><i>${t("Omgekeerd:")}</i> ${c.rev}`}},
   ()=>{const c=weightedPick(majors);const opts=mc(c.name,majors.map(m=>m.name));
-   return {id:c.id,q:`Welke kaart past bij: <i>"${c.up}"</i>`,opts,ans:c.name,ex:`${c.name} (${ROMAN[c.n]}) — ${c.kw}.`}},
+   return {id:c.id,q:t("Welke kaart past bij: <i>\"{u}\"</i>",{u:c.up}),opts,ans:c.name,ex:`${c.name} (${ROMAN[c.n]}) — ${c.kw}.`}},
   ()=>{const c=weightedPick(majors);const opts=mc(c.rev,majors.map(m=>m.rev));
-   return {card:c,id:c.id,q:`Wat betekent <b>${c.name}</b> <u>omgekeerd</u>?`,opts,ans:c.rev,ex:`Rechtop: ${c.kw}. Omgekeerd keert die energie zich naar binnen of raakt ze geblokkeerd.`}}
+   return {card:c,id:c.id,q:t("Wat betekent <b>{c}</b> <u>omgekeerd</u>?",{c:c.name}),opts,ans:c.rev,ex:t("Rechtop: {kw}. Omgekeerd keert die energie zich naar binnen of raakt ze geblokkeerd.",{kw:c.kw})}}
  ],
  minor:[
   ()=>{const c=weightedPick(minors);const pool=minors.filter(m=>m.suit===c.suit||m.n===c.n).map(m=>m.kw);
-   return {card:c,id:c.id,q:`Wat betekent de <b>${c.name}</b>?`,opts:mc(c.kw,pool),ans:c.kw,ex:numExplain(c)+(c.scene?`<br>Beeld: ${c.scene}`:"")}},
+   return {card:c,id:c.id,q:t("Wat betekent de <b>{c}</b>?",{c:c.name}),opts:mc(c.kw,pool),ans:c.kw,ex:numExplain(c)+(c.scene?`<br>${t("Beeld:")} ${c.scene}`:"")}},
   ()=>{const c=weightedPick(minors);const pool=minors.filter(m=>m.suit===c.suit||m.n===c.n).map(m=>m.name);
-   return {id:c.id,q:`Welke kaart betekent: <i>"${c.kw}"</i>?`,opts:mc(c.name,pool),ans:c.name,ex:numExplain(c)}},
+   return {id:c.id,q:t("Welke kaart betekent: <i>\"{kw}\"</i>?",{kw:c.kw}),opts:mc(c.name,pool),ans:c.name,ex:numExplain(c)}},
   ()=>{const keys=Object.keys(MINSYM);const k=rnd(keys);const c=byId(k);const pool=minors.filter(m=>m.n===c.n||m.suit===c.suit).map(m=>m.name);
-   return {id:c.id,q:`Welke kaart toont dit beeld? <i>"${MINSYM[k]}"</i>`,opts:mc(c.name,pool),ans:c.name,ex:`${c.name}: ${c.kw}. `+numExplain(c)}}
+   return {id:c.id,q:t("Welke kaart toont dit beeld? <i>\"{s}\"</i>",{s:MINSYM[k]}),opts:mc(c.name,pool),ans:c.name,ex:`${c.name}: ${c.kw}. `+numExplain(c)}}
  ],
  court:[
   ()=>{const c=weightedPick(courts);const pool=courts.filter(m=>m.suit===c.suit||m.rank===c.rank).map(m=>m.name);
-   return {id:c.id,q:`Welke hofkaart beschrijft: <i>"${c.kw}"</i>?`,opts:mc(c.name,pool),ans:c.name,ex:`${COURT[c.rank].name}: ${COURT[c.rank].role}. ${SUITS[c.suit].name} = ${SUITS[c.suit].el}. Samen: "${COURT[c.rank].el.toLowerCase()} van ${SUITS[c.suit].el.toLowerCase()}".`}},
+   return {id:c.id,q:t("Welke hofkaart beschrijft: <i>\"{kw}\"</i>?",{kw:c.kw}),opts:mc(c.name,pool),ans:c.name,ex:t("{r}: {role}. {s} = {e}. Samen: \"{re} van {se}\".",{r:COURT[c.rank].name,role:COURT[c.rank].role,s:SUITS[c.suit].name,e:SUITS[c.suit].el,re:lc(COURT[c.rank].el),se:lc(SUITS[c.suit].el)})}},
   ()=>{const r=rnd(Object.keys(COURT));const opts=mc(COURT[r].name,Object.values(COURT).map(x=>x.name));
-   return {id:"court-"+r,q:`Welke rang staat voor: <i>"${COURT[r].role}"</i>?`,opts,ans:COURT[r].name,ex:`De ${COURT[r].name} hoort (Golden Dawn) bij het element ${COURT[r].el}.`}}
+   return {id:"court-"+r,q:t("Welke rang staat voor: <i>\"{role}\"</i>?",{role:COURT[r].role}),opts,ans:COURT[r].name,ex:t("De {r} hoort (Golden Dawn) bij het element {e}.",{r:COURT[r].name,e:COURT[r].el})}}
  ],
  symbol:[
   ()=>{const c=weightedPick(majors);const s=rnd(c.sym);const opts=mc(c.name,majors.map(m=>m.name));
-   return {id:c.id,q:`Op welke kaart zie je: <b>${s[0].toLowerCase()}</b>?`,opts,ans:c.name,ex:`${s[0]} op ${c.name}: ${s[1]}.`}},
+   return {id:c.id,q:t("Op welke kaart zie je: <b>{s}</b>?",{s:lc(s[0])}),opts,ans:c.name,ex:t("{s} op {c}: {m}.",{s:s[0],c:c.name,m:s[1]})}},
   ()=>{const c=weightedPick(majors);const s=rnd(c.sym);const all=majors.flatMap(m=>m.sym.map(x=>x[1]));
-   return {card:c,id:c.id,q:`Wat symboliseert <b>${s[0].toLowerCase()}</b> op ${c.name}?`,opts:mc(s[1],all),ans:s[1],ex:`${c.name}: ${c.kw}.`}},
+   return {card:c,id:c.id,q:t("Wat symboliseert <b>{s}</b> op {c}?",{s:lc(s[0]),c:c.name}),opts:mc(s[1],all),ans:s[1],ex:`${c.name}: ${c.kw}.`}},
   ()=>{const s=rnd(COLORS);const opts=mc(s[1],COLORS.map(x=>x[1]));
-   return {id:"kleur-"+s[0],q:`Waar staat de kleur <b>${s[0].toLowerCase()}</b> meestal voor in de tarot?`,opts,ans:s[1],ex:`Bijvoorbeeld: ${s[2]}.`}},
+   return {id:"kleur-"+s[0],q:t("Waar staat de kleur <b>{k}</b> meestal voor in de tarot?",{k:lc(s[0])}),opts,ans:s[1],ex:t("Bijvoorbeeld: {x}.",{x:s[2]})}},
   ()=>{const s=rnd(SYMBOLS);const opts=mc(s[1],SYMBOLS.map(x=>x[1]));
-   return {id:"sym-"+s[0],q:`Wat betekent het terugkerende symbool <b>${s[0].toLowerCase()}</b>?`,opts,ans:s[1],ex:`${s[0]}: ${s[1]}.`}}
+   return {id:"sym-"+s[0],q:t("Wat betekent het terugkerende symbool <b>{s}</b>?",{s:lc(s[0])}),opts,ans:s[1],ex:`${s[0]}: ${s[1]}.`}}
  ],
  numero:[
   ()=>{const n=Math.floor(Math.random()*11);const opts=mc(NUM[n].t+" — "+NUM[n].d,Object.values(NUM).map(x=>x.t+" — "+x.d));
-   const maj=MAJOR[n];return {id:"num-"+n,q:`Waar staat het getal <b>${n}</b> voor in de tarot-numerologie?`,opts,ans:NUM[n].t+" — "+NUM[n].d,ex:`Bij de Grote Arcana hoort ${n} bij ${maj.name} (${maj.kw}).`}},
+   const maj=MAJOR[n];return {id:"num-"+n,q:t("Waar staat het getal <b>{n}</b> voor in de tarot-numerologie?",{n}),opts,ans:NUM[n].t+" — "+NUM[n].d,ex:t("Bij de Grote Arcana hoort {n} bij {c} ({kw}).",{n,c:maj.name,kw:maj.kw})}},
   ()=>{const c=weightedPick(majors);const opts=mc(ROMAN[c.n],ROMAN.slice());
-   return {id:c.id,q:`Welk nummer draagt <b>${c.name}</b>?`,opts,ans:ROMAN[c.n],ex:`${c.name} is kaart ${c.n} (${ROMAN[c.n]}). `+(c.n>9?`Reductie: ${String(c.n).split("").join(" + ")} = ${reduce(c.n)} → ${MAJOR[reduce(c.n)].name}.`:`${NUM[c.n].t}: ${NUM[c.n].d}.`)}},
+   return {id:c.id,q:t("Welk nummer draagt <b>{c}</b>?",{c:c.name}),opts,ans:ROMAN[c.n],ex:t("{c} is kaart {n} ({r}).",{c:c.name,n:c.n,r:ROMAN[c.n]})+" "+(c.n>9?t("Reductie: {sum} = {r} → {c}.",{sum:String(c.n).split("").join(" + "),r:reduce(c.n),c:MAJOR[reduce(c.n)].name}):`${NUM[c.n].t}: ${NUM[c.n].d}.`)}},
   ()=>{const c=weightedPick(majors.filter(m=>m.n>=10));const r=reduce(c.n);const root=MAJOR[r];const opts=mc(root.name,majors.filter(m=>m.n<10).map(m=>m.name));
-   return {card:c,id:c.id,q:`Tot welke kaart reduceert <b>${c.name}</b> (${ROMAN[c.n]})?`,opts,ans:root.name,ex:`${String(c.n).split("").join(" + ")} = ${r}: ${root.name}. ${c.name} (${c.kw}) is een hogere octaaf van ${root.name} (${root.kw}).`}},
+   return {card:c,id:c.id,q:t("Tot welke kaart reduceert <b>{c}</b> ({r})?",{c:c.name,r:ROMAN[c.n]}),opts,ans:root.name,ex:`${String(c.n).split("").join(" + ")} = ${r}: ${root.name}. `+t("{c} ({kw}) is een hogere octaaf van {r} ({rkw}).",{c:c.name,kw:c.kw,r:root.name,rkw:root.kw})}},
   ()=>{const n=1+Math.floor(Math.random()*10);const s=rnd(Object.keys(SUITS));const c=byId(s+"-"+n);
    const pool=Object.values(NUM).slice(1).map(x=>x.t);
-   return {card:c,id:c.id,q:`Welk numerologisch thema zit in de <b>${c.name}</b>?`,opts:mc(NUM[n].t,pool),ans:NUM[n].t,ex:numExplain(c)+` Vandaar: ${c.kw}.`}},
-  ()=>{const row=rnd([0,1,2]);const names=["het bewuste: de wereld en het ego","het innerlijk: zelfonderzoek en karakter","het spirituele: transformatie en verlichting"];
+   return {card:c,id:c.id,q:t("Welk numerologisch thema zit in de <b>{c}</b>?",{c:c.name}),opts:mc(NUM[n].t,pool),ans:NUM[n].t,ex:numExplain(c)+" "+t("Vandaar: {kw}.",{kw:c.kw})}},
+  ()=>{const row=rnd([0,1,2]);const names=[t("het bewuste: de wereld en het ego"),t("het innerlijk: zelfonderzoek en karakter"),t("het spirituele: transformatie en verlichting")];
    const first=MAJOR[row*7+1].name, last=MAJOR[row*7+7].name;
-   return {id:"rij-"+row,q:`In de Narrenreis vormt kaart ${ROMAN[row*7+1]} t/m ${ROMAN[row*7+7]} (${first} → ${last}) een rij. Waar gaat die fase over?`,opts:shuffle(names),ans:names[row],ex:`De drie rijen van zeven: I–VII de buitenwereld, VIII–XIV de binnenwereld, XV–XXI de spirituele wereld.`}}
+   return {id:"rij-"+row,q:t("In de Narrenreis vormt kaart {a} t/m {b} ({f} → {l}) een rij. Waar gaat die fase over?",{a:ROMAN[row*7+1],b:ROMAN[row*7+7],f:first,l:last}),opts:shuffle(names),ans:names[row],ex:t("De drie rijen van zeven: I–VII de buitenwereld, VIII–XIV de binnenwereld, XV–XXI de spirituele wereld.")}}
  ],
  element:[
-  ()=>{const s=rnd(Object.keys(SUITS));const opts=mc(SUITS[s].el,["Vuur","Water","Lucht","Aarde"]);
-   return {id:"el-"+s,q:`Welk element hoort bij <b>${SUITS[s].name}</b>?`,opts,ans:SUITS[s].el,ex:`${SUITS[s].name} = ${SUITS[s].el}: ${SUITS[s].theme}.`}},
+  ()=>{const s=rnd(Object.keys(SUITS));const opts=mc(SUITS[s].el,Object.values(SUITS).map(x=>x.el));
+   return {id:"el-"+s,q:t("Welk element hoort bij <b>{s}</b>?",{s:SUITS[s].name}),opts,ans:SUITS[s].el,ex:`${SUITS[s].name} = ${SUITS[s].el}: ${SUITS[s].theme}.`}},
   ()=>{const s=rnd(Object.keys(SUITS));const opts=mc(SUITS[s].signs,Object.values(SUITS).map(x=>x.signs));
-   return {id:"sign-"+s,q:`Welke sterrenbeelden horen bij <b>${SUITS[s].name}</b> (${SUITS[s].el})?`,opts,ans:SUITS[s].signs,ex:`${SUITS[s].el}tekens: ${SUITS[s].signs}.`}},
+   return {id:"sign-"+s,q:t("Welke sterrenbeelden horen bij <b>{s}</b> ({e})?",{s:SUITS[s].name,e:SUITS[s].el}),opts,ans:SUITS[s].signs,ex:t("{e}tekens: {signs}.",{e:SUITS[s].el,signs:SUITS[s].signs})}},
   ()=>{const s=rnd(Object.keys(SUITS));const opts=mc(SUITS[s].theme,Object.values(SUITS).map(x=>x.theme));
-   return {id:"theme-"+s,q:`Over welk levensgebied gaan de <b>${SUITS[s].name}</b>?`,opts,ans:SUITS[s].theme,ex:`In gewone speelkaarten zijn ${SUITS[s].name} de ${SUITS[s].cards}.`}},
+   return {id:"theme-"+s,q:t("Over welk levensgebied gaan de <b>{s}</b>?",{s:SUITS[s].name}),opts,ans:SUITS[s].theme,ex:t("In gewone speelkaarten zijn {s} de {c}.",{s:SUITS[s].name,c:SUITS[s].cards})}},
   ()=>{const c=weightedPick(majors);const opts=mc(c.astroName,majors.map(m=>m.astroName));
-   return {card:c,id:c.id,q:`Welke astrologische correspondentie hoort bij <b>${c.name}</b>?`,opts,ans:c.astroName,ex:`${c.name} ↔ ${c.astro}${VS} ${c.astroName}.`}}
+   return {card:c,id:c.id,q:t("Welke astrologische correspondentie hoort bij <b>{c}</b>?",{c:c.name}),opts,ans:c.astroName,ex:`${c.name} ↔ ${c.astro}${VS} ${c.astroName}.`}}
  ]
 };
 
@@ -536,11 +632,11 @@ const GEN = {
 let Q = null;
 function renderStats(){
   const seen=Object.keys(STATS).length, ok=Object.values(STATS).reduce((a,s)=>a+s.ok,0), bad=Object.values(STATS).reduce((a,s)=>a+s.bad,0);
-  $("#statBox").innerHTML = BEST.runs?`<div><b>${BEST.runs}</b>tests gedaan</div><div><b>${BEST.best}%</b>beste score</div><div><b>${ok+bad?Math.round(ok/(ok+bad)*100):0}%</b>totaal goed</div><div><b>${seen}</b>onderwerpen geoefend</div>`:"";
+  $("#statBox").innerHTML = BEST.runs?`<div><b>${BEST.runs}</b>${t("tests gedaan")}</div><div><b>${BEST.best}%</b>${t("beste score")}</div><div><b>${ok+bad?Math.round(ok/(ok+bad)*100):0}%</b>${t("totaal goed")}</div><div><b>${seen}</b>${t("onderwerpen geoefend")}</div>`:"";
 }
 function startQuiz(){
   const cats=[...document.querySelectorAll("#quizSetup input:checked")].map(i=>i.value);
-  if(!cats.length){alert("Kies minstens één onderwerp.");return}
+  if(!cats.length){alert(t("Kies minstens één onderwerp."));return}
   const len=+$("#qLen").value, qs=[], used=new Set();
   let guard=0;
   while(qs.length<len && guard++<len*20){
@@ -554,13 +650,13 @@ function startQuiz(){
 function showQ(){
   const q=Q.qs[Q.i];
   $("#quizRun").innerHTML=`
-   <div class="qhead"><span>Vraag ${Q.i+1} van ${Q.qs.length}</span><span>Score: ${Q.score}</span></div>
+   <div class="qhead"><span>${t("Vraag {i} van {n}",{i:Q.i+1,n:Q.qs.length})}</span><span>${t("Score: {s}",{s:Q.score})}</span></div>
    <div class="progress"><div style="width:${Q.i/Q.qs.length*100}%"></div></div>
    ${q.card?`<div class="qcard">${cardHTML(q.card)}</div>`:""}
    <div class="qtext">${q.q}</div>
    <div class="opts" style="clear:both">${q.opts.map((o,k)=>`<button class="opt" data-k="${k}">${o}</button>`).join("")}</div>
    <div id="fb"></div>
-   <p style="display:flex;justify-content:space-between;gap:8px"><button onclick="endQuiz(true)">Stoppen</button><button class="primary" id="next" style="display:none">${Q.i+1<Q.qs.length?"Volgende →":"Bekijk resultaat"}</button></p>`;
+   <p style="display:flex;justify-content:space-between;gap:8px"><button onclick="endQuiz(true)">${t("Stoppen")}</button><button class="primary" id="next" style="display:none">${Q.i+1<Q.qs.length?t("Volgende →"):t("Bekijk resultaat")}</button></p>`;
   document.querySelectorAll(".opt").forEach(b=>b.onclick=()=>answer(b));
   $("#next").onclick=()=>{Q.i++; Q.i<Q.qs.length?showQ():endQuiz()};
   window.scrollTo({top:$("#quizRun").offsetTop-70,behavior:"smooth"});
@@ -571,17 +667,17 @@ function answer(b){
   if(!ok)b.classList.add("wrong");
   const s=STATS[q.id]||{ok:0,bad:0}; ok?s.ok++:s.bad++; STATS[q.id]=s; store("tarot-stats",STATS);
   if(ok)Q.score++; else Q.wrong.push(q);
-  $("#fb").innerHTML=`<div class="explain"><b style="color:var(${ok?"--ok":"--bad"})">${ok?"✓ Goed!":"✗ Helaas."}</b> ${ok?"":"Juist: <b>"+q.ans+"</b><br>"}${q.ex}</div>`;
+  $("#fb").innerHTML=`<div class="explain"><b style="color:var(${ok?"--ok":"--bad"})">${ok?t("✓ Goed!"):t("✗ Helaas.")}</b> ${ok?"":t("Juist:")+" <b>"+q.ans+"</b><br>"}${q.ex}</div>`;
   $("#next").style.display="inline-block"; $("#next").focus();
 }
 function endQuiz(stopped){
   const done=stopped?Q.i:Q.qs.length; if(!done){resetQuiz();return}
   const pct=Math.round(Q.score/done*100);
   BEST.runs++; BEST.best=Math.max(BEST.best,pct); store("tarot-best",BEST);
-  const msg=pct>=90?"Meester van de Arcana! ☉":pct>=70?"Mooi werk — De Ster schijnt op je. ✶":pct>=50?"Goed op weg, Magiër in opleiding.":"De Dwaas begint aan zijn reis — blijf oefenen!";
+  const msg=t(pct>=90?"Meester van de Arcana! ☉":pct>=70?"Mooi werk — De Ster schijnt op je. ✶":pct>=50?"Goed op weg, Magiër in opleiding.":"De Dwaas begint aan zijn reis — blijf oefenen!");
   $("#quizRun").innerHTML=`<div style="text-align:center"><div class="score">${Q.score} / ${done}</div><h3>${msg}</h3>
-   <p><button class="primary" onclick="startQuiz()">Nog een keer</button> <button onclick="resetQuiz()">Andere onderwerpen</button></p></div>
-   ${Q.wrong.length?`<h3>Om te herhalen</h3>`+Q.wrong.map(q=>`<div class="mist"><div>${q.q}</div><div>→ <b>${q.ans}</b></div><div class="muted">${q.ex}</div></div>`).join(""):""}`;
+   <p><button class="primary" onclick="startQuiz()">${t("Nog een keer")}</button> <button onclick="resetQuiz()">${t("Andere onderwerpen")}</button></p></div>
+   ${Q.wrong.length?`<h3>${t("Om te herhalen")}</h3>`+Q.wrong.map(q=>`<div class="mist"><div>${q.q}</div><div>→ <b>${q.ans}</b></div><div class="muted">${q.ex}</div></div>`).join(""):""}`;
 }
 function resetQuiz(){ $("#quizRun").style.display="none"; $("#quizSetup").style.display="block"; renderStats(); }
 $("#startQuiz").onclick=startQuiz;
@@ -590,8 +686,8 @@ $("#startQuiz").onclick=startQuiz;
 function renderDeck(f){
   const cards = f==="major"?majors:DECK.filter(c=>c.suit===f);
   $("#deckIntro").innerHTML = f==="major"
-    ? "De 22 kaarten van de Grote Arcana beschrijven grote levenslessen en archetypen — de reis van De Dwaas."
-    : `<b>${SUITS[f].name}</b> · element <b>${SUITS[f].el}</b> · ${SUITS[f].signs}. Thema: ${SUITS[f].theme}.`;
+    ? t("De 22 kaarten van de Grote Arcana beschrijven grote levenslessen en archetypen — de reis van De Dwaas.")
+    : `<b>${SUITS[f].name}</b> · ${t("element")} <b>${SUITS[f].el}</b> · ${SUITS[f].signs}. ${t("Thema:")} ${SUITS[f].theme}.`;
   $("#deckGrid").innerHTML = cards.map(c=>cardHTML(c)).join("");
 }
 document.addEventListener("click",e=>{
@@ -601,26 +697,26 @@ document.addEventListener("click",e=>{
 function openCard(id){
   const c=byId(id); let html="";
   if(c.type==="major"){
-    const r=c.n>9?`<dd>${String(c.n).split("").join(" + ")} = ${reduce(c.n)} → verwant aan <b>${MAJOR[reduce(c.n)].name}</b></dd>`:"";
+    const r=c.n>9?`<dd>${String(c.n).split("").join(" + ")} = ${reduce(c.n)} → ${t("verwant aan")} <b>${MAJOR[reduce(c.n)].name}</b></dd>`:"";
     const higher=MAJOR.filter(m=>m.n>9&&reduce(m.n)===c.n).map(m=>m.name).join(", ");
-    html=`<dl><dt>Kernwoorden</dt><dd>${c.kw.split(", ").map(k=>`<span class="tag">${k}</span>`).join("")}</dd>
-      <dt>Rechtop</dt><dd>${c.up}</dd><dt>Omgekeerd</dt><dd>${c.rev}</dd>
-      <dt>Symboliek</dt><dd><ul class="sym">${c.sym.map(s=>`<li><b>${s[0]}</b> — ${s[1]}</li>`).join("")}</ul></dd>
-      <dt>Numerologie</dt><dd>${c.n<=10?`${c.n}: ${NUM[c.n].t.toLowerCase()} — ${NUM[c.n].d}`:"Hoger getal"}</dd>${r}${higher?`<dd>Hogere octaaf: ${higher}</dd>`:""}
-      <dt>Astrologie</dt><dd>${c.astro}${VS} ${c.astroName}</dd></dl>`;
+    html=`<dl><dt>${t("Kernwoorden")}</dt><dd>${c.kw.split(", ").map(k=>`<span class="tag">${k}</span>`).join("")}</dd>
+      <dt>${t("Rechtop")}</dt><dd>${c.up}</dd><dt>${t("Omgekeerd")}</dt><dd>${c.rev}</dd>
+      <dt>${t("Symboliek")}</dt><dd><ul class="sym">${c.sym.map(s=>`<li><b>${s[0]}</b> — ${s[1]}</li>`).join("")}</ul></dd>
+      <dt>${t("Numerologie")}</dt><dd>${c.n<=10?`${c.n}: ${lc(NUM[c.n].t)} — ${NUM[c.n].d}`:t("Hoger getal")}</dd>${r}${higher?`<dd>${t("Hogere octaaf:")} ${higher}</dd>`:""}
+      <dt>${t("Astrologie")}</dt><dd>${c.astro}${VS} ${c.astroName}</dd></dl>`;
   } else if(c.type==="minor"){
-    html=`<dl><dt>Betekenis</dt><dd>${c.kw.split(", ").map(k=>`<span class="tag">${k}</span>`).join("")}</dd>
-      ${c.scene?`<dt>Beeld</dt><dd>${c.scene}</dd>`:""}
-      <dt>Numerologie</dt><dd><b>${c.n} — ${NUM[c.n].t}</b>: ${NUM[c.n].d}. Verwant aan ${MAJOR[c.n].name}.</dd>
-      <dt>Element</dt><dd><b>${SUITS[c.suit].el}</b> — ${SUITS[c.suit].theme}</dd>
-      <dt>Zo lees je hem</dt><dd>${NUM[c.n].t} in het domein van ${SUITS[c.suit].el.toLowerCase()} → ${c.kw}.</dd></dl>`;
+    html=`<dl><dt>${t("Betekenis")}</dt><dd>${c.kw.split(", ").map(k=>`<span class="tag">${k}</span>`).join("")}</dd>
+      ${c.scene?`<dt>${t("Beeld")}</dt><dd>${c.scene}</dd>`:""}
+      <dt>${t("Numerologie")}</dt><dd><b>${c.n} — ${NUM[c.n].t}</b>: ${NUM[c.n].d}. ${t("Verwant aan {c}.",{c:MAJOR[c.n].name})}</dd>
+      <dt>${t("Element")}</dt><dd><b>${SUITS[c.suit].el}</b> — ${SUITS[c.suit].theme}</dd>
+      <dt>${t("Zo lees je hem")}</dt><dd>${t("{n} in het domein van {e} → {kw}.",{n:NUM[c.n].t,e:lc(SUITS[c.suit].el),kw:c.kw})}</dd></dl>`;
   } else {
-    html=`<dl><dt>Persoonlijkheid</dt><dd>${c.kw.split(", ").map(k=>`<span class="tag">${k}</span>`).join("")}</dd>
-      <dt>Rang</dt><dd><b>${COURT[c.rank].name}</b> (${COURT[c.rank].el}): ${COURT[c.rank].role}</dd>
-      <dt>Kleur</dt><dd><b>${SUITS[c.suit].name}</b> (${SUITS[c.suit].el}): ${SUITS[c.suit].theme}</dd>
-      <dt>Elementcombinatie</dt><dd>${COURT[c.rank].el} van ${SUITS[c.suit].el}</dd></dl>`;
+    html=`<dl><dt>${t("Persoonlijkheid")}</dt><dd>${c.kw.split(", ").map(k=>`<span class="tag">${k}</span>`).join("")}</dd>
+      <dt>${t("Rang")}</dt><dd><b>${COURT[c.rank].name}</b> (${COURT[c.rank].el}): ${COURT[c.rank].role}</dd>
+      <dt>${t("Kleur|suit")}</dt><dd><b>${SUITS[c.suit].name}</b> (${SUITS[c.suit].el}): ${SUITS[c.suit].theme}</dd>
+      <dt>${t("Elementcombinatie")}</dt><dd>${t("{a} van {b}|element",{a:COURT[c.rank].el,b:SUITS[c.suit].el})}</dd></dl>`;
   }
-  $("#modalBody").innerHTML=`<div class="detail"><div>${cardHTML(c,"big")}</div><div><h2>${c.name}</h2>${c.en?`<div class="muted">${c.en} · ${ROMAN[c.n]}</div>`:""}${html}</div></div>`;
+  $("#modalBody").innerHTML=`<div class="detail"><div>${cardHTML(c,"big")}</div><div><h2>${c.name}</h2>${c.en?`<div class="muted">${LANG==="en"?"":c.en+" · "}${ROMAN[c.n]}</div>`:""}${html}</div></div>`;
   $("#modal").classList.add("show");
 }
 function closeModal(){$("#modal").classList.remove("show")}
@@ -631,9 +727,9 @@ document.querySelectorAll("#deckTabs button").forEach(b=>b.onclick=()=>{
 
 /* ===================== NUMEROLOGIE / SYMBOLIEK ===================== */
 function renderStatic(){
-  $("#numTable").innerHTML=`<tr><th>Getal</th><th>Thema</th><th>Grote Arcana</th><th>Kleine Arcana (voorbeeld)</th></tr>`+
-   Object.keys(NUM).map(n=>`<tr><td><b>${n}</b></td><td><b>${NUM[n].t}</b><br><span class="muted">${NUM[n].d}</span></td><td>${MAJOR[n].name}</td><td>${n>0?RANKN[n-1]+"en: "+["staven","bekers","zwaarden","pentakels"].map(s=>MINOR[s][n-1].split(",")[0]).join(" · "):"—"}</td></tr>`).join("");
-  const rows=["I–VII · De buitenwereld: bewustzijn, ego en maatschappij","VIII–XIV · De binnenwereld: karakter, zelfonderzoek en loslaten","XV–XXI · De spirituele wereld: schaduw, verlichting en heelheid"];
+  $("#numTable").innerHTML=`<tr><th>${t("Getal")}</th><th>${t("Thema")}</th><th>${t("Grote Arcana")}</th><th>${t("Kleine Arcana (voorbeeld)")}</th></tr>`+
+   Object.keys(NUM).map(n=>`<tr><td><b>${n}</b></td><td><b>${NUM[n].t}</b><br><span class="muted">${NUM[n].d}</span></td><td>${MAJOR[n].name}</td><td>${n>0?(LANG==="nl"?["Azen","Tweeën","Drieën","Vieren","Vijven","Zessen","Zevens","Achten","Negens","Tienen"][n-1]+": ":t("{r}en: ",{r:RANKN[n-1]}))+["staven","bekers","zwaarden","pentakels"].map(s=>MINOR[s][n-1].split(",")[0]).join(" · "):"—"}</td></tr>`).join("");
+  const rows=[t("I–VII · De buitenwereld: bewustzijn, ego en maatschappij"),t("VIII–XIV · De binnenwereld: karakter, zelfonderzoek en loslaten"),t("XV–XXI · De spirituele wereld: schaduw, verlichting en heelheid")];
   $("#rows7").innerHTML=`<div class="row7">${cardHTML(MAJOR[0]&&{...MAJOR[0],id:"major-0",type:"major"})}</div>`+
    rows.map((t,r)=>`<div class="muted">${t}</div><div class="row7">${majors.slice(r*7+1,r*7+8).map(c=>cardHTML(c)).join("")}</div>`).join("");
   let red="";
@@ -642,15 +738,20 @@ function renderStatic(){
     red+=`<div class="mist"><b>${n} · ${NUM[n].t}</b>: ${fam.map(m=>`${m.name} (${ROMAN[m.n]})`).join(" → ")}</div>`;
   }
   $("#reduct").innerHTML=red;
-  $("#suitInfo").innerHTML=Object.keys(SUITS).map(s=>`<div class="panel"><div style="display:flex;gap:12px;align-items:center"><div class="card s-${s}" style="width:60px;padding:4px;cursor:default"><div class="glyph">${ICON[s]}</div></div><div><h3 style="margin:0">${SUITS[s].name}</h3><div class="muted">${SUITS[s].el} · ${SUITS[s].signs}</div></div></div><p>${SUITS[s].theme}.</p><p class="muted" style="margin:0">In speelkaarten: ${SUITS[s].cards}</p></div>`).join("");
-  $("#courtTable").innerHTML=`<tr><th>Rang</th><th>Element</th><th>Rol</th></tr>`+Object.values(COURT).map(c=>`<tr><td><b>${c.name}</b></td><td>${c.el}</td><td>${c.role}</td></tr>`).join("");
-  $("#colorTable").innerHTML=`<tr><th>Kleur</th><th>Betekenis</th><th>Voorbeeld</th></tr>`+COLORS.map(c=>`<tr><td><b>${c[0]}</b></td><td>${c[1]}</td><td class="muted">${c[2]}</td></tr>`).join("");
-  $("#symTable").innerHTML=`<tr><th>Symbool</th><th>Betekenis</th></tr>`+SYMBOLS.map(c=>`<tr><td><b>${c[0]}</b></td><td>${c[1]}</td></tr>`).join("");
+  $("#suitInfo").innerHTML=Object.keys(SUITS).map(s=>`<div class="panel"><div style="display:flex;gap:12px;align-items:center"><div class="card s-${s}" style="width:60px;padding:4px;cursor:default"><div class="glyph">${ICON[s]}</div></div><div><h3 style="margin:0">${SUITS[s].name}</h3><div class="muted">${SUITS[s].el} · ${SUITS[s].signs}</div></div></div><p>${SUITS[s].theme}.</p><p class="muted" style="margin:0">${t("In speelkaarten:")} ${SUITS[s].cards}</p></div>`).join("");
+  $("#courtTable").innerHTML=`<tr><th>${t("Rang")}</th><th>${t("Element")}</th><th>${t("Rol")}</th></tr>`+Object.values(COURT).map(c=>`<tr><td><b>${c.name}</b></td><td>${c.el}</td><td>${c.role}</td></tr>`).join("");
+  $("#colorTable").innerHTML=`<tr><th>${t("Kleur")}</th><th>${t("Betekenis")}</th><th>${t("Voorbeeld")}</th></tr>`+COLORS.map(c=>`<tr><td><b>${c[0]}</b></td><td>${c[1]}</td><td class="muted">${c[2]}</td></tr>`).join("");
+  $("#symTable").innerHTML=`<tr><th>${t("Symbool")}</th><th>${t("Betekenis")}</th></tr>`+SYMBOLS.map(c=>`<tr><td><b>${c[0]}</b></td><td>${c[1]}</td></tr>`).join("");
+  // kolomnamen als label per cel, voor de gestapelde weergave op telefoons
+  document.querySelectorAll(".panel>table").forEach(tb=>{
+    const hd=[...tb.querySelectorAll("tr:first-child th")].map(th=>th.textContent);
+    tb.querySelectorAll("tr").forEach(tr=>[...tr.children].forEach((td,i)=>{ if(td.tagName==="TD"&&hd[i]) td.dataset.l=hd[i]; }));
+  });
 }
 
 /* ===================== GEBOORTEKAART ===================== */
 $("#calcBirth").onclick=()=>{
-  const v=$("#bdate").value; if(!v){$("#birthOut").innerHTML="<p class='muted'>Kies eerst een datum.</p>";return}
+  const v=$("#bdate").value; if(!v){$("#birthOut").innerHTML=`<p class='muted'>${t("Kies eerst een datum.")}</p>`;return}
   const [y,m,d]=v.split("-").map(Number);
   const sum=d+m+y; const steps=[`${d} + ${m} + ${y} = ${sum}`];
   let n=sum;
@@ -660,9 +761,9 @@ $("#calcBirth").onclick=()=>{
   let k=n; while(k>9){k=reduce(k);chain.push(k)}
   const uniq=[...new Set(chain)];
   const cards=uniq.map(i=>({...MAJOR[i],id:"major-"+i,type:"major"}));
-  $("#birthOut").innerHTML=`<div class="chain">${steps.join("<br>")}${n===22?"<br>22 = De Dwaas (0)":""}</div>
+  $("#birthOut").innerHTML=`<div class="chain">${steps.join("<br>")}${n===22?`<br>22 = ${MAJOR[0].name} (0)`:""}</div>
    <div class="row7" style="margin-top:16px">${cards.map(c=>cardHTML(c)).join("")}</div>
-   ${cards.map((c,i)=>`<p><b>${i===0?(cards.length>1?"Persoonlijkheidskaart":"Persoonlijkheids- én zielskaart"):"Zielskaart"}: ${c.name}</b> — ${c.kw}. <span class="muted">${c.up}</span></p>`).join("")}`;
+   ${cards.map((c,i)=>`<p><b>${t(i===0?(cards.length>1?"Persoonlijkheidskaart":"Persoonlijkheids- én zielskaart"):"Zielskaart")}: ${c.name}</b> — ${c.kw}. <span class="muted">${c.up}</span></p>`).join("")}`;
 };
 
 /* ===================== LEZING UITLEGGEN ===================== */
@@ -702,9 +803,11 @@ const SPREADS = {
  vrij:{name:"Vrije legging — eigen posities",desc:"Kies zelf het aantal kaarten en geef elke positie een eigen naam.",pos:[]}
 };
 
+overlay({MINOR_REV,COURT_REV,ROLE_INTRO,SPREADS},TL.data);
+
 // opties voor de kaartkeuze
-const CARD_OPTIONS = '<option value="">— kies een kaart —</option>' +
-  `<optgroup label="Grote Arcana">${majors.map(c=>`<option value="${c.id}">${ROMAN[c.n]} · ${c.name}</option>`).join("")}</optgroup>` +
+const CARD_OPTIONS = `<option value="">${t("— kies een kaart —")}</option>` +
+  `<optgroup label="${t("Grote Arcana")}">${majors.map(c=>`<option value="${c.id}">${ROMAN[c.n]} · ${c.name}</option>`).join("")}</optgroup>` +
   Object.keys(SUITS).map(s=>`<optgroup label="${SUITS[s].name} (${SUITS[s].el})">${DECK.filter(c=>c.suit===s).map(c=>`<option value="${c.id}">${c.name}</option>`).join("")}</optgroup>`).join("");
 
 Object.entries(SPREADS).forEach(([k,s])=>{const o=document.createElement("option");o.value=k;o.textContent=s.name;$("#rSpread").appendChild(o)});
@@ -714,7 +817,7 @@ function currentPositions(){
   const k=$("#rSpread").value;
   if(k!=="vrij") return SPREADS[k].pos;
   const n=Math.max(1,Math.min(15,+$("#rCount").value||1));
-  return Array.from({length:n},(_,i)=>["Kaart "+(i+1),"neutral",""]);
+  return Array.from({length:n},(_,i)=>[t("Kaart {n}",{n:i+1}),"neutral",""]);
 }
 function readRows(){
   return [...document.querySelectorAll("#posRows .posrow")].map(r=>({
@@ -728,9 +831,9 @@ function renderRows(prev){
   $("#freeCount").style.display = k==="vrij"?"block":"none";
   $("#spreadDesc").textContent = SPREADS[k].desc;
   $("#posRows").innerHTML = pos.map((p,i)=>`<div class="posrow">
-    <div class="pl">${k==="vrij"?`<input type="text" value="${(prev[i]&&prev[i].label)||p[0]}" aria-label="Naam positie ${i+1}">`:`<b>${p[0]}</b><span>${p[2]}</span>`}</div>
-    <select aria-label="Kaart voor ${p[0]}">${CARD_OPTIONS}</select>
-    <label class="revlab"><input type="checkbox"> omgekeerd</label></div>`).join("");
+    <div class="pl">${k==="vrij"?`<input type="text" value="${(prev[i]&&prev[i].label)||p[0]}" aria-label="${t("Naam positie {n}",{n:i+1})}">`:`<b>${p[0]}</b><span>${p[2]}</span>`}</div>
+    <select aria-label="${t("Kaart voor {p}",{p:p[0]})}">${CARD_OPTIONS}</select>
+    <label class="revlab"><input type="checkbox"> ${t("omgekeerd")}</label></div>`).join("");
   [...document.querySelectorAll("#posRows .posrow")].forEach((r,i)=>{
     if(prev[i]){ r.querySelector("select").value=prev[i].id||""; r.querySelector("input[type=checkbox]").checked=!!prev[i].rev; }
   });
@@ -777,17 +880,17 @@ const POSITIVE = new Set(["major-3","major-6","major-8","major-14","major-17","m
 const cap = s=>s.charAt(0).toUpperCase()+s.slice(1);
 const dot = s=>/[.!?]$/.test(s)?s:s+".";
 function cardContext(c){
-  if(c.type==="major") return `Grote Arcana (${ROMAN[c.n]}): een groot levensthema, niet zomaar een dagelijks voorval. Astrologisch verbonden met ${c.astroName}.`;
-  if(c.type==="minor") return `Numerologie: ${c.n} = <b>${NUM[c.n].t.toLowerCase()}</b> (${NUM[c.n].d}), in het element <b>${SUITS[c.suit].el.toLowerCase()}</b> (${SUITS[c.suit].theme}).`;
-  return `Hofkaart: dit kan een persoon zijn met deze eigenschappen, of een kant van jezelf die nu gevraagd wordt. ${COURT[c.rank].name}: ${COURT[c.rank].role}.`;
+  if(c.type==="major") return t("Grote Arcana ({r}): een groot levensthema, niet zomaar een dagelijks voorval. Astrologisch verbonden met {a}.",{r:ROMAN[c.n],a:c.astroName});
+  if(c.type==="minor") return t("Numerologie: {n} = <b>{t}</b> ({d}), in het element <b>{e}</b> ({th}).",{n:c.n,t:lc(NUM[c.n].t),d:NUM[c.n].d,e:lc(SUITS[c.suit].el),th:SUITS[c.suit].theme});
+  return t("Hofkaart: dit kan een persoon zijn met deze eigenschappen, of een kant van jezelf die nu gevraagd wordt. {r}: {role}.",{r:COURT[c.rank].name,role:COURT[c.rank].role});
 }
 function positionText(c,rev,role){
   const m=cardMeaning(c,rev);
   let main;
-  if(role==="advice") main = rev ? `Pas op voor ${m.kw}. Herken je dat bij jezelf, dan is dat het punt om aan te werken.` : `Zet in op ${m.kw}. ${c.type==="major"?dot(c.up):""}`;
-  else if(role==="challenge" && !rev && POSITIVE.has(c.id)) main = `${dot(cap(m.text))} Een positieve kaart als uitdaging betekent vaak: te veel van het goede, of moeite om dit toe te laten.`;
+  if(role==="advice") main = rev ? t("Pas op voor {kw}. Herken je dat bij jezelf, dan is dat het punt om aan te werken.",{kw:m.kw}) : `${t("Zet in op {kw}.",{kw:m.kw})} ${c.type==="major"?dot(c.up):""}`;
+  else if(role==="challenge" && !rev && POSITIVE.has(c.id)) main = `${dot(cap(m.text))} ${t("Een positieve kaart als uitdaging betekent vaak: te veel van het goede, of moeite om dit toe te laten.")}`;
   else main = dot(cap(m.text));
-  const revNote = rev ? `<p class="muted"><i>Omgekeerd:</i> de energie van deze kaart is geblokkeerd, naar binnen gericht of (nog) niet volledig aanwezig. Rechtop zou ze betekenen: ${cardMeaning(c,false).kw}.</p>` : "";
+  const revNote = rev ? `<p class="muted"><i>${t("Omgekeerd:")}</i> ${t("de energie van deze kaart is geblokkeerd, naar binnen gericht of (nog) niet volledig aanwezig. Rechtop zou ze betekenen: {kw}.",{kw:cardMeaning(c,false).kw})}</p>` : "";
   return `<p>${main}</p>${revNote}<p class="muted">${cardContext(c)}</p>`;
 }
 function bar(label,n,total,color){
@@ -799,32 +902,33 @@ const EL_Q = {
  Lucht:"Welke gedachte of overtuiging kleurt hoe je dit ziet — en klopt die?",
  Aarde:"Welke kleine, concrete stap kun je deze week zetten?"
 };
+overlay({EL_Q},TL.data);
 const EL_COLOR={Vuur:"var(--vuur)",Water:"var(--water)",Lucht:"var(--lucht)",Aarde:"var(--aarde)"};
 
 function explainReading(){
   const k=$("#rSpread").value, pos=currentPositions(), rows=readRows(), q=$("#rQuestion").value.trim();
   const items=rows.map((r,i)=>({...r,label:k==="vrij"?(r.label||pos[i][0]):pos[i][0],role:pos[i][1],hint:pos[i][2],card:r.id?byId(r.id):null})).filter(x=>x.card);
   const ids=items.map(x=>x.id), dup=ids.filter((x,i)=>ids.indexOf(x)!==i);
-  $("#rMsg").textContent = !items.length ? "Kies minstens één kaart." : (items.length<rows.length ? `Let op: ${rows.length-items.length} positie(s) zonder kaart worden overgeslagen. ` : "") + (dup.length?`Let op: ${byId(dup[0]).name} ligt er meer dan eens — in één deck kan dat niet.`:"");
+  $("#rMsg").textContent = !items.length ? t("Kies minstens één kaart.") : (items.length<rows.length ? t("Let op: {n} positie(s) zonder kaart worden overgeslagen.",{n:rows.length-items.length})+" " : "") + (dup.length?t("Let op: {c} ligt er meer dan eens — in één deck kan dat niet.",{c:byId(dup[0]).name}):"");
   if(!items.length) return;
 
-  const n=items.length;
+  const n=items.length, R=x=>x.rev?` (${t("omgekeerd")})`:"", AND=" "+t("en")+" ";
   const maj=items.filter(x=>x.card.type==="major"), crt=items.filter(x=>x.card.type==="court"), mins=items.filter(x=>x.card.type==="minor");
   const revs=items.filter(x=>x.rev);
   const elCount={Vuur:0,Water:0,Lucht:0,Aarde:0};
-  items.forEach(x=>{if(x.card.suit)elCount[SUITS[x.card.suit].el]++});
+  items.forEach(x=>{if(x.card.suit)elCount[SUITS[x.card.suit].ek]++});
   const suitTotal=Object.values(elCount).reduce((a,b)=>a+b,0);
 
-  let h=`<h2>Jouw lezing</h2>`;
-  if(q) h+=`<p><b>Vraag:</b> <i>${q.replace(/</g,"&lt;")}</i></p>`;
-  h+=`<p class="muted">${k==="vrij"?"Vrije legging":SPREADS[k].name} · ${n} kaart${n>1?"en":""}</p>`;
+  let h=`<h2>${t("Jouw lezing")}</h2>`;
+  if(q) h+=`<p><b>${t("Vraag:")}</b> <i>${q.replace(/</g,"&lt;")}</i></p>`;
+  h+=`<p class="muted">${k==="vrij"?t("Vrije legging"):SPREADS[k].name} · ${t(n>1?"{n} kaarten":"{n} kaart",{n})}</p>`;
   h+=`<div class="spreadview">${items.map(x=>`<div class="slot">${cardHTML(x.card,x.rev?"rev":"")}${x.label}</div>`).join("")}</div>`;
 
   // per positie
-  h+=`<h3>Kaart voor kaart</h3>`;
+  h+=`<h3>${t("Kaart voor kaart")}</h3>`;
   items.forEach(x=>{
     h+=`<div class="pos-ex"><div>${cardHTML(x.card,x.rev?"rev":"")}</div><div>
-      <h4>${x.label}: ${x.card.name}${x.rev?" (omgekeerd)":""}${x.hint?` <small>— ${x.hint}</small>`:""}</h4>
+      <h4>${x.label}: ${x.card.name}${R(x)}${x.hint?` <small>— ${x.hint}</small>`:""}</h4>
       ${ROLE_INTRO[x.role]?`<p class="muted">${ROLE_INTRO[x.role]}</p>`:""}
       ${positionText(x.card,x.rev,x.role)}</div></div>`;
   });
@@ -832,40 +936,40 @@ function explainReading(){
   // rode draad
   if(n>1){
     const first=items[0], last=items[n-1];
-    h+=`<h3>De rode draad</h3><p>`;
-    h+=`De lezing begint bij <b>${first.card.name}</b>${first.rev?" (omgekeerd)":""} — ${cardMeaning(first.card,first.rev).kw} — en komt uit bij <b>${last.card.name}</b>${last.rev?" (omgekeerd)":""} — ${cardMeaning(last.card,last.rev).kw}. `;
+    h+=`<h3>${t("De rode draad")}</h3><p>`;
+    h+=t("De lezing begint bij <b>{a}</b>{ar} — {akw} — en komt uit bij <b>{b}</b>{br} — {bkw}.",{a:first.card.name,ar:R(first),akw:cardMeaning(first.card,first.rev).kw,b:last.card.name,br:R(last),bkw:cardMeaning(last.card,last.rev).kw})+" ";
     const ch=items.find(x=>x.role==="challenge");
-    if(ch) h+=`Wat daartussen staat, is <b>${ch.card.name}</b>: ${cardMeaning(ch.card,ch.rev).kw}. `;
+    if(ch) h+=t("Wat daartussen staat, is <b>{c}</b>: {kw}.",{c:ch.card.name,kw:cardMeaning(ch.card,ch.rev).kw})+" ";
     const adv=items.find(x=>x.role==="advice");
-    if(adv) h+=`De sleutel ligt in <b>${adv.card.name}</b>${adv.rev?" (omgekeerd)":""}. `;
+    if(adv) h+=t("De sleutel ligt in <b>{c}</b>{r}.",{c:adv.card.name,r:R(adv)})+" ";
     if(k==="keuze" && items.length===6){
-      const a=items.find(x=>x.label==="Uitkomst A"), b=items.find(x=>x.label==="Uitkomst B");
-      if(a&&b) h+=`Vergelijk de twee uitkomsten: optie A leidt naar <b>${a.card.name}</b> (${cardMeaning(a.card,a.rev).kw}), optie B naar <b>${b.card.name}</b> (${cardMeaning(b.card,b.rev).kw}). Welke voelt meer als jouw weg? `;
+      const a=items.find(x=>x.label===SPREADS.keuze.pos[2][0]), b=items.find(x=>x.label===SPREADS.keuze.pos[4][0]);
+      if(a&&b) h+=t("Vergelijk de twee uitkomsten: optie A leidt naar <b>{a}</b> ({akw}), optie B naar <b>{b}</b> ({bkw}). Welke voelt meer als jouw weg?",{a:a.card.name,akw:cardMeaning(a.card,a.rev).kw,b:b.card.name,bkw:cardMeaning(b.card,b.rev).kw})+" ";
     }
-    if(maj.length) h+=`De grote thema's in deze lezing zijn ${maj.map(x=>`<b>${x.card.name}</b>`).join(", ").replace(/, ([^,]*)$/," en $1")}.`;
+    if(maj.length) h+=t("De grote thema's in deze lezing zijn {list}.",{list:maj.map(x=>`<b>${x.card.name}</b>`).join(", ").replace(/, ([^,]*)$/,AND+"$1")});
     h+=`</p>`;
   }
 
   // grote vs kleine arcana
-  h+=`<h3>Grote en Kleine Arcana</h3><div class="bars">${bar("Grote",maj.length,n,"var(--gold)")}${bar("Kleine",mins.length,n,"var(--muted)")}${bar("Hofkaarten",crt.length,n,"var(--gold2)")}</div><p>`;
-  if(maj.length/n>=.5) h+=`Meer dan de helft van de kaarten komt uit de Grote Arcana. Dit gaat over een belangrijke levensfase of les; er spelen krachten die groter zijn dan je dagelijkse keuzes.`;
-  else if(maj.length===0) h+=`Geen Grote Arcana: het gaat om alledaagse zaken die grotendeels in je eigen hand liggen.`;
-  else h+=`Een mengeling van grote thema's en dagelijkse situaties: de Grote Arcana geven de richting aan, de Kleine Arcana laten zien waar het in de praktijk speelt.`;
-  if(crt.length>=2) h+=` Er liggen ${crt.length} hofkaarten: er zijn waarschijnlijk meerdere mensen bij betrokken, of verschillende kanten van jezelf.`;
+  h+=`<h3>${t("Grote en Kleine Arcana")}</h3><div class="bars">${bar(t("Grote"),maj.length,n,"var(--gold)")}${bar(t("Kleine"),mins.length,n,"var(--muted)")}${bar(t("Hofkaarten"),crt.length,n,"var(--gold2)")}</div><p>`;
+  if(maj.length/n>=.5) h+=t("Meer dan de helft van de kaarten komt uit de Grote Arcana. Dit gaat over een belangrijke levensfase of les; er spelen krachten die groter zijn dan je dagelijkse keuzes.");
+  else if(maj.length===0) h+=t("Geen Grote Arcana: het gaat om alledaagse zaken die grotendeels in je eigen hand liggen.");
+  else h+=t("Een mengeling van grote thema's en dagelijkse situaties: de Grote Arcana geven de richting aan, de Kleine Arcana laten zien waar het in de praktijk speelt.");
+  if(crt.length>=2) h+=" "+t("Er liggen {n} hofkaarten: er zijn waarschijnlijk meerdere mensen bij betrokken, of verschillende kanten van jezelf.",{n:crt.length});
   h+=`</p>`;
 
   // elementen
   if(suitTotal){
     const sorted=Object.entries(elCount).sort((a,b)=>b[1]-a[1]);
     const missing=Object.entries(elCount).filter(e=>!e[1]).map(e=>e[0]);
-    h+=`<h3>Elementen</h3><div class="bars">${Object.entries(elCount).map(([e,v])=>bar(e,v,suitTotal,EL_COLOR[e])).join("")}</div><p>`;
+    h+=`<h3>${t("Elementen")}</h3><div class="bars">${Object.entries(elCount).map(([e,v])=>bar(t(e),v,suitTotal,EL_COLOR[e])).join("")}</div><p>`;
     if(sorted[0][1]>sorted[1][1]){
-      const d=sorted[0][0], s=Object.values(SUITS).find(x=>x.el===d);
-      h+=`<b>${d}</b> (${s.name}) overheerst: de lezing gaat vooral over ${s.theme}. `;
-    } else h+=`Geen enkel element overheerst; de vraag raakt meerdere levensgebieden. `;
+      const d=sorted[0][0], s=Object.values(SUITS).find(x=>x.ek===d);
+      h+=t("<b>{e}</b> ({s}) overheerst: de lezing gaat vooral over {th}.",{e:s.el,s:s.name,th:s.theme})+" ";
+    } else h+=t("Geen enkel element overheerst; de vraag raakt meerdere levensgebieden.")+" ";
     if(missing.length && suitTotal>=3){
       const tips={Vuur:"passie en daadkracht",Water:"gevoel en verbinding",Lucht:"helder denken en communicatie",Aarde:"praktische zaken en het lichaam"};
-      h+=`Er ontbreekt ${missing.map(m=>`<b>${m.toLowerCase()}</b>`).join(" en ")}: ${missing.map(m=>tips[m]).join(" en ")} krijgen in deze situatie weinig aandacht. Misschien is dat juist wat er nodig is.`;
+      h+=t("Er ontbreekt {m}: {tips} krijgen in deze situatie weinig aandacht. Misschien is dat juist wat er nodig is.",{m:missing.map(m=>`<b>${lc(t(m))}</b>`).join(AND),tips:missing.map(m=>t(tips[m])).join(AND)});
     }
     h+=`</p>`;
   }
@@ -874,22 +978,22 @@ function explainReading(){
   const nums=[...mins.map(x=>x.card.n), ...maj.filter(x=>x.card.n>=1&&x.card.n<=10).map(x=>x.card.n)];
   const freq={}; nums.forEach(v=>freq[v]=(freq[v]||0)+1);
   const reps=Object.entries(freq).filter(e=>e[1]>=2).sort((a,b)=>b[1]-a[1]);
-  h+=`<h3>Numerologie</h3><p>`;
-  if(reps.length) reps.forEach(([v,c])=>{h+=`Het getal <b>${v}</b> komt ${c}× voor: <b>${NUM[v].t.toLowerCase()}</b> — ${NUM[v].d}. Dat thema wordt in deze lezing extra benadrukt. `});
+  h+=`<h3>${t("Numerologie")}</h3><p>`;
+  if(reps.length) reps.forEach(([v,c])=>{h+=t("Het getal <b>{v}</b> komt {c}× voor: <b>{t}</b> — {d}. Dat thema wordt in deze lezing extra benadrukt.",{v,c,t:lc(NUM[v].t),d:NUM[v].d})+" "});
   if(mins.length>=2){
     const avg=mins.reduce((a,x)=>a+x.card.n,0)/mins.length;
-    h+= avg<=3.5 ? `De Kleine Arcana hebben vooral lage getallen: je staat aan het <b>begin</b> van iets; er is nog veel open.`
-      : avg<=6.5 ? `De Kleine Arcana zitten rond het midden: je zit <b>midden in het proces</b>, met de groei en de wrijving die daarbij horen.`
-      : `De Kleine Arcana hebben vooral hoge getallen: een fase loopt naar zijn <b>afronding</b>; er wordt geoogst of afgesloten.`;
-  } else if(!reps.length) h+=`Er zijn geen herhaalde getallen; geen numerologisch thema springt eruit.`;
+    h+= t(avg<=3.5 ? "De Kleine Arcana hebben vooral lage getallen: je staat aan het <b>begin</b> van iets; er is nog veel open."
+      : avg<=6.5 ? "De Kleine Arcana zitten rond het midden: je zit <b>midden in het proces</b>, met de groei en de wrijving die daarbij horen."
+      : "De Kleine Arcana hebben vooral hoge getallen: een fase loopt naar zijn <b>afronding</b>; er wordt geoogst of afgesloten.");
+  } else if(!reps.length) h+=t("Er zijn geen herhaalde getallen; geen numerologisch thema springt eruit.");
   h+=`</p>`;
 
   // omgekeerd
   if(n>1){
-    h+=`<h3>Omgekeerde kaarten</h3><p>${revs.length} van de ${n} kaarten liggen omgekeerd. `;
-    h+= revs.length===0 ? `De energie stroomt vrij; wat de kaarten laten zien, speelt zich openlijk af.`
-      : revs.length/n>=.5 ? `Dat is veel: er is sprake van blokkades, vertraging of een proces dat vooral innerlijk plaatsvindt. Kijk wat je tegenhoudt.`
-      : `Op ${revs.map(x=>x.label.replace(/^\d+\.\s*/,"").toLowerCase()).join(", ")} stokt de energie wat; daar zit het werk.`;
+    h+=`<h3>${t("Omgekeerde kaarten")}</h3><p>${t("{r} van de {n} kaarten liggen omgekeerd.",{r:revs.length,n})} `;
+    h+= revs.length===0 ? t("De energie stroomt vrij; wat de kaarten laten zien, speelt zich openlijk af.")
+      : revs.length/n>=.5 ? t("Dat is veel: er is sprake van blokkades, vertraging of een proces dat vooral innerlijk plaatsvindt. Kijk wat je tegenhoudt.")
+      : t("Op {list} stokt de energie wat; daar zit het werk.",{list:revs.map(x=>lc(x.label.replace(/^\d+\.\s*/,""))).join(", ")});
     h+=`</p>`;
   }
 
@@ -901,33 +1005,33 @@ function explainReading(){
     while(v>22){const r=reduce(v);steps.push(`${String(v).split("").join("+")} = ${r}`);v=r}
     if(v===22) v=0;
     const qc=MAJOR[v];
-    h+=`<h3>Kwintessens</h3><p class="muted">De som van alle kaartnummers (hofkaarten tellen niet mee): ${counted.map(x=>x.card.n).join(" + ")} = ${sum}${steps.length?" → "+steps.join(" → "):""}${sum===22?" → De Dwaas":""}.</p>`;
-    h+=`<div style="display:flex;gap:16px;align-items:center"><div class="slot" style="width:84px">${cardHTML({...qc,id:"major-"+qc.n,type:"major"})}</div><p><b>${qc.name}</b> is de kwintessens: de onderliggende les van de hele lezing. ${qc.up}</p></div>`;
+    h+=`<h3>${t("Kwintessens")}</h3><p class="muted">${t("De som van alle kaartnummers (hofkaarten tellen niet mee):")} ${counted.map(x=>x.card.n).join(" + ")} = ${sum}${steps.length?" → "+steps.join(" → "):""}${sum===22?" → "+MAJOR[0].name:""}.</p>`;
+    h+=`<div style="display:flex;gap:16px;align-items:center"><div class="slot" style="width:84px">${cardHTML({...qc,id:"major-"+qc.n,type:"major"})}</div><p>${t("<b>{c}</b> is de kwintessens: de onderliggende les van de hele lezing.",{c:qc.name})} ${qc.up}</p></div>`;
   }
 
   // reflectie
   const dom = suitTotal ? Object.entries(elCount).sort((a,b)=>b[1]-a[1])[0][0] : null;
-  h+=`<h3>Om over na te denken</h3><ul class="sym">`;
+  h+=`<h3>${t("Om over na te denken")}</h3><ul class="sym">`;
   if(dom) h+=`<li>${EL_Q[dom]}</li>`;
   const out=items.find(x=>x.role==="outcome"||x.role==="future");
-  if(out) h+=`<li>Wat zou er moeten veranderen als de uitkomst (${out.card.name}) niet is wat je wilt?</li>`;
+  if(out) h+=`<li>${t("Wat zou er moeten veranderen als de uitkomst ({c}) niet is wat je wilt?",{c:out.card.name})}</li>`;
   const ch=items.find(x=>x.role==="challenge");
-  if(ch) h+=`<li>Hoe zie je ${ch.card.name} terug in je dagelijks leven?</li>`;
-  h+=`<li>Welke kaart raakt je het meest — en waarom juist die?</li></ul>`;
-  h+=`<p class="muted" style="font-size:.85rem">Deze uitleg is automatisch samengesteld uit de traditionele betekenissen. Tarot is een spiegel voor reflectie, geen vaststaande voorspelling. Jouw eigen gevoel bij de kaarten weegt het zwaarst.</p>`;
-  h+=`<div class="btnrow"><button onclick="copyReading()">📋 Kopieer tekst</button><button onclick="window.print()">🖨️ Print / PDF</button><button onclick="shareReading()">🔗 Kopieer deellink</button><span id="copyMsg" class="muted" style="align-self:center"></span></div>`;
+  if(ch) h+=`<li>${t("Hoe zie je {c} terug in je dagelijks leven?",{c:ch.card.name})}</li>`;
+  h+=`<li>${t("Welke kaart raakt je het meest — en waarom juist die?")}</li></ul>`;
+  h+=`<p class="muted" style="font-size:.85rem">${t("Deze uitleg is automatisch samengesteld uit de traditionele betekenissen. Tarot is een spiegel voor reflectie, geen vaststaande voorspelling. Jouw eigen gevoel bij de kaarten weegt het zwaarst.")}</p>`;
+  h+=`<div class="btnrow"><button onclick="copyReading()">${t("📋 Kopieer tekst")}</button><button onclick="window.print()">${t("🖨️ Print / PDF")}</button><button onclick="shareReading()">${t("🔗 Kopieer deellink")}</button><span id="copyMsg" class="muted" style="align-self:center"></span></div>`;
 
-  h+=`<div class="aibox" id="aiBox"><h3>✨ AI-uitleg</h3><div id="aiMsgs"></div>
-    <div id="aiStart"><p class="muted">Laat Claude deze lezing als geheel uitleggen, afgestemd op je vraag. Daarna kun je doorvragen.</p><button class="primary" onclick="aiStart()">✨ Vraag een persoonlijke AI-uitleg</button></div>
-    <form id="aiAsk" class="aiask" style="display:none" onsubmit="aiFollow(event)"><input type="text" id="aiInput" placeholder="Stel een vervolgvraag over je lezing…" autocomplete="off"><button class="primary" id="aiSend">Verstuur</button></form></div>`;
+  h+=`<div class="aibox" id="aiBox"><h3>${t("✨ AI-uitleg")}</h3><div id="aiMsgs"></div>
+    <div id="aiStart"><p class="muted">${t("Laat Claude deze lezing als geheel uitleggen, afgestemd op je vraag. Daarna kun je doorvragen.")}</p><button class="primary" onclick="aiStart()">${t("✨ Vraag een persoonlijke AI-uitleg")}</button></div>
+    <form id="aiAsk" class="aiask" style="display:none" onsubmit="aiFollow(event)"><input type="text" id="aiInput" placeholder="${t("Stel een vervolgvraag over je lezing…")}" autocomplete="off"><button class="primary" id="aiSend">${t("Verstuur")}</button></form></div>`;
 
   // context voor de AI
   const tmp=document.createElement("div"); tmp.innerHTML=h;
   tmp.querySelectorAll(".card,.btnrow,.spreadview,.bars,.aibox,.pos-ex,h2").forEach(e=>e.remove());
   LAST = {
-    q, spread:k==="vrij"?"Vrije legging":SPREADS[k].name,
-    cards:items.map((x,i)=>`${i+1}. ${x.label}${x.hint?` (${x.hint})`:""}: ${x.card.name}${x.rev?" — OMGEKEERD":""} — ${cardMeaning(x.card,x.rev).kw}`).join("\n"),
-    analysis:(on=>[...tmp.querySelectorAll("h3,p,li")].filter(e=>{if(e.tagName==="H3"&&e.textContent!=="Kaart voor kaart")on=true;return on&&!e.getAttribute("style")}))(false).map(e=>(e.tagName==="H3"?"\n## ":e.tagName==="LI"?"- ":"")+e.textContent.replace(/\s+/g," ").trim()).join("\n").trim()
+    q, spread:k==="vrij"?t("Vrije legging"):SPREADS[k].name,
+    cards:items.map((x,i)=>`${i+1}. ${x.label}${x.hint?` (${x.hint})`:""}: ${x.card.name}${x.rev?" — "+t("OMGEKEERD"):""} — ${cardMeaning(x.card,x.rev).kw}`).join("\n"),
+    analysis:(on=>[...tmp.querySelectorAll("h3,p,li")].filter(e=>{if(e.tagName==="H3"&&e.textContent!==t("Kaart voor kaart"))on=true;return on&&!e.getAttribute("style")}))(false).map(e=>(e.tagName==="H3"?"\n## ":e.tagName==="LI"?"- ":"")+e.textContent.replace(/\s+/g," ").trim()).join("\n").trim()
   };
   AI.abort && AI.abort.abort(); AI.history=[];
   const saved=histSave(k,q,rows);
@@ -948,21 +1052,21 @@ const AI={key:"",model:"claude-sonnet-5-5",history:[],busy:false,abort:null};
   if(!$("#aiModel").value){ $("#aiModel").selectedIndex=0; AI.model=$("#aiModel").value; }
   aiBadge();
 })();
-function aiBadge(){ $("#aiBadge").textContent = AI.key ? "· ingesteld ✓" : "· optioneel"; }
+function aiBadge(){ $("#aiBadge").textContent = AI.key ? t("· ingesteld ✓") : t("· optioneel"); }
 $("#aiSave").onclick=()=>{
   AI.key=$("#aiKey").value.trim(); AI.model=$("#aiModel").value;
   if($("#aiRemember").checked){ store("tarot-ai-key",AI.key); store("tarot-ai-model",AI.model); }
   else { try{localStorage.removeItem("tarot-ai-key")}catch(e){} store("tarot-ai-model",AI.model); }
-  $("#aiStatus").textContent = AI.key ? (AI.key.startsWith("sk-ant-")?"Opgeslagen ✓":"Opgeslagen — let op: een Anthropic-sleutel begint meestal met sk-ant-") : "Geen sleutel ingevuld.";
+  $("#aiStatus").textContent = AI.key ? (AI.key.startsWith("sk-ant-")?t("Opgeslagen ✓"):t("Opgeslagen — let op: een Anthropic-sleutel begint meestal met sk-ant-")) : t("Geen sleutel ingevuld.");
   aiBadge();
 };
 $("#aiModel").onchange=()=>{AI.model=$("#aiModel").value; store("tarot-ai-model",AI.model)};
 $("#aiForget").onclick=()=>{
   AI.key=""; $("#aiKey").value=""; try{localStorage.removeItem("tarot-ai-key")}catch(e){}
-  $("#aiStatus").textContent="Sleutel verwijderd uit deze browser."; aiBadge();
+  $("#aiStatus").textContent=t("Sleutel verwijderd uit deze browser."); aiBadge();
 };
 
-const AI_SYSTEM = `Je bent een ervaren, warme en nuchtere tarotlezer die werkt binnen de Rider-Waite-Smith-traditie. Je schrijft in het Nederlands, in de jij-vorm.
+const AI_SYSTEM = TL.aiSystem || `Je bent een ervaren, warme en nuchtere tarotlezer die werkt binnen de Rider-Waite-Smith-traditie. Je schrijft in het Nederlands, in de jij-vorm.
 
 Je krijgt een lezing: de vraag, de legging, de kaarten per positie (met kernbetekenis, ook of een kaart omgekeerd ligt) en een automatische analyse van de website (rode draad, verhouding Grote/Kleine Arcana, elementen, numerologie, omgekeerde kaarten, kwintessens).
 
@@ -976,18 +1080,18 @@ Werkwijze:
 - Vervolgvragen beantwoord je beknopt en concreet, met verwijzing naar de kaarten in deze lezing.`;
 
 function aiContextMessage(){
-  return `Hier is mijn tarotlezing.
+  return `${t("Hier is mijn tarotlezing.")}
 
-Vraag: ${LAST.q || "(geen specifieke vraag — een algemene lezing)"}
-Legging: ${LAST.spread}
+${t("Vraag:")} ${LAST.q || t("(geen specifieke vraag — een algemene lezing)")}
+${t("Legging:")} ${LAST.spread}
 
-Kaarten:
+${t("Kaarten:")}
 ${LAST.cards}
 
-Automatische analyse van de website:
+${t("Automatische analyse van de website:")}
 ${LAST.analysis}
 
-Geef me een persoonlijke uitleg van deze lezing.`;
+${t("Geef me een persoonlijke uitleg van deze lezing.")}`;
 }
 
 function esc(t){return t.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
@@ -1013,13 +1117,13 @@ function aiAddMsg(cls,html){
   $("#aiMsgs").appendChild(d); return d;
 }
 function aiErrorText(status,msg){
-  if(status===401) return "De API-sleutel wordt niet geaccepteerd. Controleer de sleutel bij ‘AI-uitleg instellen’.";
-  if(status===403) return "Deze sleutel heeft geen toegang tot dit model. Kies een ander model bij ‘AI-uitleg instellen’.";
-  if(status===404) return "Het gekozen model is niet gevonden. Kies een ander model bij ‘AI-uitleg instellen’.";
-  if(status===429) return "Te veel verzoeken of je limiet is bereikt. Probeer het over een minuut opnieuw.";
-  if(status===400 && /credit|balance/i.test(msg||"")) return "Je API-tegoed is op. Vul het aan in de Anthropic Console.";
-  if(status===529||status>=500) return "Anthropic is op dit moment overbelast of onbereikbaar. Probeer het zo opnieuw.";
-  return "Er ging iets mis"+(msg?": "+msg:".");
+  if(status===401) return t("De API-sleutel wordt niet geaccepteerd. Controleer de sleutel bij ‘AI-uitleg instellen’.");
+  if(status===403) return t("Deze sleutel heeft geen toegang tot dit model. Kies een ander model bij ‘AI-uitleg instellen’.");
+  if(status===404) return t("Het gekozen model is niet gevonden. Kies een ander model bij ‘AI-uitleg instellen’.");
+  if(status===429) return t("Te veel verzoeken of je limiet is bereikt. Probeer het over een minuut opnieuw.");
+  if(status===400 && /credit|balance/i.test(msg||"")) return t("Je API-tegoed is op. Vul het aan in de Anthropic Console.");
+  if(status===529||status>=500) return t("Anthropic is op dit moment overbelast of onbereikbaar. Probeer het zo opnieuw.");
+  return t("Er ging iets mis")+(msg?": "+msg:".");
 }
 async function aiStream(onText){
   AI.abort=new AbortController();
@@ -1049,13 +1153,13 @@ async function aiRun(){
   try{
     const text=await aiStream(t=>{box.innerHTML=md(t)});
     box.classList.remove("typing");
-    if(!text.trim()) throw new Error("Er kwam geen antwoord terug. Probeer het opnieuw.");
+    if(!text.trim()) throw new Error(t("Er kwam geen antwoord terug. Probeer het opnieuw."));
     AI.history.push({role:"assistant",content:text});
     histSaveAI();
     $("#aiAsk").style.display="flex";
   }catch(e){
     box.className="msg err";
-    box.textContent = e.name==="AbortError" ? "Gestopt." : (e.message==="Failed to fetch" ? "Kon Anthropic niet bereiken. Controleer je internetverbinding." : e.message);
+    box.textContent = e.name==="AbortError" ? t("Gestopt.") : (e.message==="Failed to fetch" ? t("Kon Anthropic niet bereiken. Controleer je internetverbinding.") : e.message);
     AI.history.pop(); // laatste vraag terugnemen zodat je opnieuw kunt proberen
     if(!AI.history.length) $("#aiStart").style.display="block"; else $("#aiAsk").style.display="flex";
   }
@@ -1066,7 +1170,7 @@ function aiStart(){
   if(!AI.key){
     $("#aiSettings").open=true; $("#aiKey").focus();
     window.scrollTo({top:$("#aiSettings").getBoundingClientRect().top+scrollY-90,behavior:"smooth"});
-    $("#aiStatus").textContent="Vul eerst je API-sleutel in en klik op Opslaan.";
+    $("#aiStatus").textContent=t("Vul eerst je API-sleutel in en klik op Opslaan.");
     return;
   }
   if(AI.busy) return;
@@ -1085,13 +1189,13 @@ function aiFollow(e){
 }
 
 function flash(t){const m=$("#copyMsg");if(m){m.textContent=t;setTimeout(()=>m.textContent="",2500)}}
-function copyText(t,msg){
-  if(navigator.clipboard) navigator.clipboard.writeText(t).then(()=>flash(msg),()=>flash("Kopiëren lukte niet."));
-  else { const a=document.createElement("textarea");a.value=t;document.body.appendChild(a);a.select();try{document.execCommand("copy");flash(msg)}catch(e){};a.remove(); }
+function copyText(txt,msg){
+  if(navigator.clipboard) navigator.clipboard.writeText(txt).then(()=>flash(msg),()=>flash(t("Kopiëren lukte niet.")));
+  else { const a=document.createElement("textarea");a.value=txt;document.body.appendChild(a);a.select();try{document.execCommand("copy");flash(msg)}catch(e){};a.remove(); }
 }
 function copyReading(){
   const clone=$("#readingOut").cloneNode(true); clone.querySelectorAll(".card,.btnrow,.spreadview,.bars,#aiStart,#aiAsk").forEach(e=>e.remove());
-  copyText(clone.innerText.replace(/\n{3,}/g,"\n\n").trim(),"Tekst gekopieerd ✓");
+  copyText(clone.innerText.replace(/\n{3,}/g,"\n\n").trim(),t("Tekst gekopieerd ✓"));
 }
 function shareReading(){
   const k=$("#rSpread").value, rows=readRows();
@@ -1099,7 +1203,7 @@ function shareReading(){
   p.set("s",k); p.set("c",rows.map(r=>(r.id||"-")+(r.rev?".r":"")).join(","));
   if(k==="vrij") p.set("l",rows.map(r=>r.label||"").join("|"));
   const q=$("#rQuestion").value.trim(); if(q) p.set("q",q);
-  copyText(location.origin+location.pathname+"?"+p.toString()+"#lezing","Link gekopieerd ✓");
+  copyText(location.origin+location.pathname+"?"+p.toString()+"#lezing",t("Link gekopieerd ✓"));
 }
 function loadSharedReading(){
   const p=new URLSearchParams(location.search);
@@ -1141,25 +1245,25 @@ function histSaveAI(){
 }
 function histRender(){
   const all=histAll();
-  $("#histCount").textContent = all.length ? `· ${all.length}` : "· nog geen";
+  $("#histCount").textContent = all.length ? `· ${all.length}` : t("· nog geen");
   $("#histTools").style.display = all.length ? "flex" : "none";
-  if(!all.length){ $("#histList").innerHTML=`<p class="muted">Nog geen leggingen bewaard. Laat een legging uitleggen en hij verschijnt hier.</p>`; return; }
+  if(!all.length){ $("#histList").innerHTML=`<p class="muted">${t("Nog geen leggingen bewaard. Laat een legging uitleggen en hij verschijnt hier.")}</p>`; return; }
   // mapjes: jaar › maand › leggingen (nieuwste eerst); de nieuwste map en die van de getoonde legging staan open
   const tree={};
   all.forEach(e=>{ const d=new Date(e.t), y=d.getFullYear(), m=d.getMonth(); ((tree[y]=tree[y]||{})[m]=tree[y][m]||[]).push(e); });
   const newest=new Date(all[0].t), cur=all.find(e=>e.id===HIST_CUR), curD=cur&&new Date(cur.t);
   const isOpen=(y,m)=>(y==newest.getFullYear()&&(m===undefined||m==newest.getMonth()))||(curD&&y==curD.getFullYear()&&(m===undefined||m==curD.getMonth()));
   const item=e=>{
-    const d=new Date(e.t), cards=e.c.filter(r=>byId(r.id)).map(r=>byId(r.id).name+(r.rev?" (omg.)":""));
+    const d=new Date(e.t), cards=e.c.filter(r=>byId(r.id)).map(r=>byId(r.id).name+(r.rev?` (${t("omg.")})`:""));
     return `<li class="${e.id===HIST_CUR?"cur":""}"><div class="hi">
-      <b>${e.q?esc(e.q):"Zonder vraag"} (${d.toLocaleTimeString("nl-NL",{hour:"2-digit",minute:"2-digit"})})</b>
-      <small>${d.toLocaleDateString("nl-NL",{weekday:"short",day:"numeric",month:"long"})} · ${SPREADS[e.s]?SPREADS[e.s].name.split(" — ")[0]:"Vrije legging"}${e.ai.length?" · ✨ AI-uitleg":""}</small>
+      <b>${e.q?esc(e.q):t("Zonder vraag")} (${d.toLocaleTimeString(LOC,{hour:"2-digit",minute:"2-digit"})})</b>
+      <small>${d.toLocaleDateString(LOC,{weekday:"short",day:"numeric",month:"long"})} · ${SPREADS[e.s]?SPREADS[e.s].name.split(" — ")[0]:t("Vrije legging")}${e.ai.length?" · "+t("✨ AI-uitleg"):""}</small>
       <small>${esc(cards.join(", "))}</small></div>
-      <div class="hb"><button class="primary" onclick="histOpen(${e.id})">Teruglezen</button><button onclick="histDelete(${e.id})" aria-label="Verwijder deze legging">Verwijder</button></div></li>`;
+      <div class="hb"><button class="primary" onclick="histOpen(${e.id})">${t("Teruglezen")}</button><button onclick="histDelete(${e.id})" aria-label="${t("Verwijder deze legging")}">${t("Verwijder")}</button></div></li>`;
   };
   const byDesc=o=>Object.keys(o).sort((a,b)=>b-a);
   $("#histList").innerHTML = byDesc(tree).map(y=>`<details class="hf"${isOpen(y)?" open":""}><summary>📁 ${y}</summary>${
-    byDesc(tree[y]).map(m=>`<details class="hf"${isOpen(y,m)?" open":""}><summary>📁 ${new Date(y,m).toLocaleDateString("nl-NL",{month:"long"})} <span class="muted">(${tree[y][m].length})</span></summary><ul class="hist">${tree[y][m].map(item).join("")}</ul></details>`).join("")
+    byDesc(tree[y]).map(m=>`<details class="hf"${isOpen(y,m)?" open":""}><summary>📁 ${new Date(y,m).toLocaleDateString(LOC,{month:"long"})} <span class="muted">(${tree[y][m].length})</span></summary><ul class="hist">${tree[y][m].map(item).join("")}</ul></details>`).join("")
   }</details>`).join("");
 }
 function histOpen(id){
@@ -1176,10 +1280,20 @@ function histDelete(id){
   store(HIST_KEY,all); if(HIST_CUR===id) HIST_CUR=null; histRender();
 }
 $("#histClear").onclick=()=>{
-  if(!confirm("Alle bewaarde leggingen van dit apparaat wissen? Dit kan niet ongedaan worden.")) return;
+  if(!confirm(t("Alle bewaarde leggingen van dit apparaat wissen? Dit kan niet ongedaan worden."))) return;
   try{localStorage.removeItem(HIST_KEY)}catch(e){} HIST_CUR=null; histRender();
 };
 histRender();
+
+/* ===================== TAALKEUZE ===================== */
+// wisselen herlaadt de pagina; een getoonde legging wordt daarna in de nieuwe taal opnieuw geopend
+document.querySelectorAll(".langsw button").forEach(b=>b.onclick=()=>{
+  if(b.dataset.lang===LANG) return;
+  store("tarot-lang",b.dataset.lang);
+  try{ if(HIST_CUR && $("#readingOut").style.display==="block") sessionStorage.setItem("tarot-reopen",HIST_CUR); }catch(e){}
+  location.reload();
+});
+applyStatic();
 
 /* ===================== NAVIGATIE ===================== */
 function go(p){
@@ -1190,7 +1304,9 @@ function go(p){
 document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>go(b.dataset.page));
 renderDeck("major"); renderStatic(); renderStats();
 const h=location.hash.slice(1);
+const reopen=(()=>{ try{ const v=sessionStorage.getItem("tarot-reopen"); sessionStorage.removeItem("tarot-reopen"); return +v; }catch(e){ return 0; } })();
 if(loadSharedReading()) go("lezing");
+else if(reopen && histAll().some(e=>e.id===reopen)){ go("lezing"); histOpen(reopen); }
 else if(h&&document.getElementById(h)) go(h);
 </script>
 </body>
