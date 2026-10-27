@@ -8,6 +8,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
+/* Merisk door imoodev (1001fonts, Free For Personal Use) */
+@font-face{font-family:"Merisk";src:url("fonts/Merisk.ttf") format("truetype");font-display:swap}
 :root{
   --bg:#14102a; --bg2:#1d1838; --panel:#241e45; --line:#3a3266;
   --text:#ece7f7; --muted:#a99fc9; --gold:#d9b45a; --gold2:#f1d48a;
@@ -41,15 +43,15 @@ section.page.show{display:block}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:14px}
 
 /* kaart */
-.card{position:relative;aspect-ratio:7/12;border-radius:12px;background:linear-gradient(160deg,#2f2760,#1b1636);border:1.5px solid var(--gold);box-shadow:0 0 0 4px #1b1636 inset,0 0 0 5px rgba(217,180,90,.45) inset,0 6px 18px rgba(0,0,0,.4);display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:12px 6px;text-align:center;cursor:pointer;transition:transform .15s;color:var(--text)}
+.card{container-type:inline-size;position:relative;aspect-ratio:7/12;border-radius:12px;background:linear-gradient(160deg,#2f2760,#1b1636);border:1.5px solid var(--gold);box-shadow:0 0 0 4px #1b1636 inset,0 0 0 5px rgba(217,180,90,.45) inset,0 6px 18px rgba(0,0,0,.4);display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:12px 6px;text-align:center;cursor:pointer;transition:transform .15s;color:var(--text)}
 .card:hover{transform:translateY(-3px)}
-.card .num{font-family:"Cormorant Garamond",serif;font-weight:700;color:var(--gold2);font-size:1.1rem}
+/* tekst schaalt mee met de kaartbreedte (cqw), zodat namen op elke kaartmaat passen */
+.card .num{font-family:Merisk,"Cormorant Garamond",serif;font-weight:400;color:var(--gold2);font-size:clamp(9px,16cqw,26px);line-height:1}
 .card .glyph{font-size:2.6rem;line-height:1;color:var(--gold2);font-family:"Segoe UI Symbol","Noto Sans Symbols","DejaVu Sans",sans-serif}
 .card .glyph svg{width:46px;height:46px}
-.card .nm{font-family:"Cormorant Garamond",serif;font-weight:600;font-size:1rem;line-height:1.15}
+.card .nm{font-family:Merisk,"Cormorant Garamond",serif;font-weight:400;font-size:clamp(8px,16.5cqw,22px);line-height:1.08;text-wrap:balance;max-width:100%;overflow-wrap:anywhere;hyphens:auto}
 .card.big{width:170px;cursor:default;margin:0 auto}
 .card.big .glyph{font-size:3.6rem}.card.big .glyph svg{width:64px;height:64px}
-.card.big .nm{font-size:1.2rem}
 .s-staven{--sc:var(--vuur)}.s-bekers{--sc:var(--water)}.s-zwaarden{--sc:var(--lucht)}.s-pentakels{--sc:var(--aarde)}
 .card[class*="s-"] .glyph{color:var(--sc)}
 .card[class*="s-"]{border-color:var(--sc)}
@@ -77,7 +79,7 @@ ul.sym{padding-left:18px;margin:6px 0}ul.sym li{margin:3px 0}
 .qhead{display:flex;justify-content:space-between;color:var(--muted);font-size:.9rem}
 .qtext{font-family:"Cormorant Garamond",serif;font-size:1.6rem;font-weight:600;line-height:1.25}
 .qcard{float:right;width:96px;margin:0 0 10px 14px}
-.qcard .card{cursor:default}.qcard .card .glyph{font-size:2rem}.qcard .card .nm{font-size:.85rem}
+.qcard .card{cursor:default}.qcard .card .glyph{font-size:2rem}
 .explain{border-left:3px solid var(--gold);padding:8px 14px;background:rgba(217,180,90,.07);border-radius:0 10px 10px 0;margin-top:6px}
 .score{font-family:"Cormorant Garamond",serif;font-size:3.4rem;color:var(--gold2);font-weight:700}
 .mist{border-top:1px solid var(--line);padding:10px 0}
@@ -86,7 +88,7 @@ th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);verti
 th{color:var(--gold2);font-weight:600}
 .cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
 .row7{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 16px}
-.row7 .card{width:74px;padding:6px 3px}.row7 .card .glyph{font-size:1.5rem}.row7 .card .nm{font-size:.72rem}.row7 .card .num{font-size:.85rem}
+.row7 .card{width:74px;padding:6px 3px}.row7 .card .glyph{font-size:1.5rem}
 input[type=date],select{font:inherit;background:var(--bg2);color:var(--text);border:1px solid var(--line);border-radius:10px;padding:9px 12px;color-scheme:dark}
 .chain{font-family:"Cormorant Garamond",serif;font-size:1.4rem;color:var(--gold2)}
 footer{text-align:center;color:var(--muted);font-size:.85rem;padding:20px 0 40px}
@@ -108,10 +110,22 @@ textarea{min-height:64px;resize:vertical}
 .card.rev{transform:rotate(180deg)}.card.rev:hover{transform:rotate(180deg) translateY(3px)}
 .spreadview{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:10px 0 20px}
 .spreadview .slot{width:84px;text-align:center;font-size:.78rem;color:var(--muted)}
-.spreadview .card{padding:6px 3px;margin-bottom:5px}.spreadview .card .glyph{font-size:1.6rem}.spreadview .card .glyph svg{width:30px;height:30px}.spreadview .card .nm{font-size:.72rem}.spreadview .card .num{font-size:.85rem}
+.spreadview .card{padding:6px 3px;margin-bottom:5px}.spreadview .card .glyph{font-size:1.6rem}.spreadview .card .glyph svg{width:30px;height:30px}
+/* trekken: kaarten één voor één omdraaien */
+.drawview{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin:16px 0 4px}
+.flip{width:96px;text-align:center;font-size:.78rem;color:var(--muted);perspective:900px}
+.flip-inner{position:relative;aspect-ratio:7/12;margin-bottom:5px;transform-style:preserve-3d;transition:transform .8s cubic-bezier(.3,.7,.3,1)}
+.flip.open .flip-inner{transform:rotateY(180deg)}
+.flip .face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.flip .face.front{transform:rotateY(180deg)}
+.flip .card{height:100%;padding:6px 3px;cursor:default}.flip .card:hover{transform:none}.flip .card.rev,.flip .card.rev:hover{transform:rotate(180deg)}
+.flip .card .glyph{font-size:1.8rem}.flip .card .glyph svg{width:34px;height:34px}
+.cardback{height:100%;border-radius:12px;border:1.5px solid var(--gold);background:radial-gradient(circle at center,rgba(217,180,90,.25) 0 18%,transparent 19%),repeating-linear-gradient(45deg,#2f2760 0 6px,#241e45 6px 12px);box-shadow:0 0 0 4px #1b1636 inset,0 0 0 5px rgba(217,180,90,.45) inset,0 6px 18px rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;color:var(--gold2);font-size:1.6rem}
+.flip.open .flip-inner .front .card{box-shadow:0 0 0 4px #1b1636 inset,0 0 0 5px rgba(217,180,90,.45) inset,0 0 22px rgba(241,212,138,.35)}
+@media(prefers-reduced-motion:reduce){.flip-inner{transition:none}}
 .reading h3{color:var(--gold2);margin-top:26px}
 .pos-ex{display:grid;grid-template-columns:78px 1fr;gap:16px;padding:14px 0;border-top:1px solid var(--line)}
-.pos-ex .card{padding:5px 3px}.pos-ex .card .glyph{font-size:1.5rem}.pos-ex .card .glyph svg{width:28px;height:28px}.pos-ex .card .nm{font-size:.7rem}.pos-ex .card .num{font-size:.8rem}
+.pos-ex .card{padding:5px 3px}.pos-ex .card .glyph{font-size:1.5rem}.pos-ex .card .glyph svg{width:28px;height:28px}
 .pos-ex h4{margin:0 0 4px;font-size:1rem}.pos-ex h4 small{color:var(--muted);font-weight:400}
 .pos-ex p{margin:4px 0}
 .bars{display:grid;gap:6px;max-width:420px}
@@ -141,17 +155,17 @@ details.aiset summary{cursor:pointer;font-weight:600;color:var(--gold2)}
   <p>Leer de 78 kaarten kennen: hun betekenis, symbolen, getallen en elementen — en test jezelf.</p>
 </header>
 <nav><div class="wrap">
-  <button data-page="test" class="active">🎴 Test</button>
-  <button data-page="leren">📖 Kaarten</button>
+  <button data-page="lezing" class="active">🔮 Uitleggen</button>
   <button data-page="num">🔢 Numerologie</button>
   <button data-page="sym">✶ Symboliek & elementen</button>
-  <button data-page="lezing">🔮 Lezing uitleggen</button>
   <button data-page="geboorte">🌙 Geboortekaart</button>
+  <button data-page="leren">📖 Kaarten</button>
+  <button data-page="test">🎴 Kaarten Leren</button>
 </div></nav>
 
 <main class="wrap">
 <!-- TEST -->
-<section class="page show" id="test">
+<section class="page" id="test">
   <div id="quizSetup" class="panel quiz-setup">
     <h2>Test je kennis</h2>
     <p class="muted">Kies onderwerpen en lengte. Kaarten die je fout beantwoordt komen vaker terug.</p>
@@ -219,7 +233,7 @@ details.aiset summary{cursor:pointer;font-weight:600;color:var(--gold2)}
 </section>
 
 <!-- LEZING -->
-<section class="page" id="lezing">
+<section class="page show" id="lezing">
   <h2>Lezing uitleggen</h2>
   <p class="muted">Vul je vraag in, kies de legging en geef aan welke kaarten er op elke positie liggen. Je krijgt een uitleg per positie en een uitleg van de lezing als geheel: elementen, numerologie, terugkerende thema's en de kwintessens.</p>
   <div class="panel" id="readingForm">
@@ -231,6 +245,7 @@ details.aiset summary{cursor:pointer;font-weight:600;color:var(--gold2)}
     </div>
     <div id="spreadDesc" class="muted" style="margin-bottom:6px"></div>
     <div id="posRows"></div>
+    <div id="drawView" class="drawview" style="display:none"></div>
     <div class="btnrow">
       <button class="primary" id="rExplain">🔮 Leg de lezing uit</button>
       <button id="rRandom">Trek willekeurig</button>
@@ -245,7 +260,7 @@ details.aiset summary{cursor:pointer;font-weight:600;color:var(--gold2)}
         <select id="aiModel" aria-label="Model">
           <option value="claude-sonnet-5-5">Claude Sonnet 5.5 (aanbevolen)</option>
           <option value="claude-opus-5-5">Claude Opus 5.5 (diepgaandst)</option>
-          <option value="claude-haiku-4-5-20251001">Claude Haiku 4.5 (snelst, goedkoopst)</option>
+          <option value="claude-haiku-5-5">Claude Haiku 5.5 (snelst, goedkoopst)</option>
         </select>
       </div>
       <label class="revlab"><input type="checkbox" id="aiRemember" checked> Sleutel onthouden op dit apparaat</label>
@@ -700,12 +715,36 @@ function renderRows(prev){
     if(prev[i]){ r.querySelector("select").value=prev[i].id||""; r.querySelector("input[type=checkbox]").checked=!!prev[i].rev; }
   });
 }
-$("#rSpread").onchange=()=>renderRows();
-$("#rCount").oninput=()=>renderRows();
-$("#rClear").onclick=()=>{renderRows([]);$("#readingOut").style.display="none";$("#rMsg").textContent=""};
+// willekeurig trekken: kaarten liggen eerst dicht en draaien één voor één om
+let DRAW={timers:[]};
+function stopDraw(){
+  DRAW.timers.forEach(clearTimeout); DRAW.timers=[];
+  $("#drawView").style.display="none"; $("#drawView").innerHTML="";
+  $("#rRandom").disabled=false; $("#rExplain").disabled=false;
+}
+$("#rSpread").onchange=()=>{stopDraw();renderRows()};
+$("#rCount").oninput=()=>{stopDraw();renderRows()};
+$("#posRows").addEventListener("change",stopDraw); // handmatig aangepast: getoonde trekking klopt niet meer
+$("#rClear").onclick=()=>{stopDraw();renderRows([]);$("#readingOut").style.display="none";$("#rMsg").textContent=""};
 $("#rRandom").onclick=()=>{
-  const ids=shuffle(DECK.map(c=>c.id));
-  renderRows(readRows().map((r,i)=>({...r,id:ids[i],rev:Math.random()<.3})));
+  stopDraw();
+  const ids=shuffle(DECK.map(c=>c.id)), pos=currentPositions();
+  const draws=readRows().map((r,i)=>({label:r.label,id:ids[i],rev:Math.random()<.3}));
+  renderRows(draws.map(d=>({label:d.label,id:"",rev:false})));
+  const rows=[...document.querySelectorAll("#posRows .posrow")];
+  $("#drawView").innerHTML=draws.map((d,i)=>`<div class="flip"><div class="flip-inner">
+    <div class="face"><div class="cardback">✦</div></div>
+    <div class="face front">${cardHTML(byId(d.id),d.rev?"rev":"")}</div></div>
+    ${($("#rSpread").value==="vrij"&&d.label)||pos[i][0]}</div>`).join("");
+  $("#drawView").style.display="flex";
+  $("#rRandom").disabled=true; $("#rExplain").disabled=true;
+  const flips=[...document.querySelectorAll("#drawView .flip")];
+  draws.forEach((d,i)=>DRAW.timers.push(setTimeout(()=>{
+    flips[i].classList.add("open");
+    rows[i].querySelector("select").value=d.id;
+    rows[i].querySelector("input[type=checkbox]").checked=d.rev;
+    if(i===draws.length-1){ $("#rRandom").disabled=false; $("#rExplain").disabled=false; }
+  },400+i*1000)));
 };
 
 /* ---- interpretatie ---- */
