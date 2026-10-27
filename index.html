@@ -146,9 +146,12 @@ details.aiset summary{cursor:pointer;font-weight:600;color:var(--gold2)}
 .typing::after{content:"▍";animation:blink 1s infinite;color:var(--gold2)}
 @keyframes blink{50%{opacity:0}}
 .aiask{display:flex;gap:8px;margin-top:10px}.aiask input{flex:1;min-width:0}
-#histPanel{margin-bottom:18px;padding:14px 20px}
+#histPanel{margin-top:18px;padding:14px 20px}
 #histPanel summary{cursor:pointer;font-weight:600;color:var(--gold2)}
-.hist{list-style:none;margin:12px 0 0;padding:0;display:grid;gap:8px}
+details.hf{margin-top:10px}
+details.hf>summary{color:var(--text)}
+details.hf details.hf{margin-left:18px}
+.hist{list-style:none;margin:8px 0 0 18px;padding:0;display:grid;gap:8px}
 .hist li{display:flex;gap:10px;align-items:center;justify-content:space-between;border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--bg2)}
 .hist li.cur{border-color:var(--gold)}
 .hist .hi{min-width:0;flex:1}
@@ -247,12 +250,6 @@ details.aiset summary{cursor:pointer;font-weight:600;color:var(--gold2)}
 <section class="page show" id="lezing">
   <h2>Lezing uitleggen</h2>
   <p class="muted">Vul je vraag in, kies de legging en geef aan welke kaarten er op elke positie liggen. Je krijgt een uitleg per positie en een uitleg van de lezing als geheel: elementen, numerologie, terugkerende thema's en de kwintessens.</p>
-  <details class="panel" id="histPanel">
-    <summary>📜 Eerdere leggingen <span id="histCount" class="muted" style="font-weight:400"></span></summary>
-    <p class="muted" style="font-size:.9rem;margin:8px 0 0">Elke legging die je laat uitleggen wordt bewaard in deze browser, op dit apparaat, inclusief de AI-uitleg. Er gaat niets naar een server.</p>
-    <ul class="hist" id="histList"></ul>
-    <div class="btnrow" id="histTools" style="margin-top:12px"><button id="histClear">Alles wissen</button></div>
-  </details>
   <div class="panel" id="readingForm">
     <div class="field"><label for="rQuestion">Je vraag (optioneel)</label>
       <textarea id="rQuestion" placeholder="Bijv. Hoe kan ik het beste omgaan met de verandering in mijn werk?"></textarea></div>
@@ -285,6 +282,12 @@ details.aiset summary{cursor:pointer;font-weight:600;color:var(--gold2)}
     </details>
   </div>
   <div id="readingOut" class="panel reading" style="display:none;margin-top:18px"></div>
+  <details class="panel" id="histPanel">
+    <summary>📜 Eerdere leggingen <span id="histCount" class="muted" style="font-weight:400"></span></summary>
+    <p class="muted" style="font-size:.9rem;margin:8px 0 0">Elke legging die je laat uitleggen wordt bewaard in deze browser, op dit apparaat, inclusief de AI-uitleg. Er gaat niets naar een server.</p>
+    <div id="histList"></div>
+    <div class="btnrow" id="histTools" style="margin-top:12px"><button id="histClear">Alles wissen</button></div>
+  </details>
 </section>
 
 <!-- GEBOORTEKAART -->
@@ -1140,14 +1143,24 @@ function histRender(){
   const all=histAll();
   $("#histCount").textContent = all.length ? `· ${all.length}` : "· nog geen";
   $("#histTools").style.display = all.length ? "flex" : "none";
-  $("#histList").innerHTML = all.length ? all.map(e=>{
+  if(!all.length){ $("#histList").innerHTML=`<p class="muted">Nog geen leggingen bewaard. Laat een legging uitleggen en hij verschijnt hier.</p>`; return; }
+  // mapjes: jaar › maand › leggingen (nieuwste eerst); de nieuwste map en die van de getoonde legging staan open
+  const tree={};
+  all.forEach(e=>{ const d=new Date(e.t), y=d.getFullYear(), m=d.getMonth(); ((tree[y]=tree[y]||{})[m]=tree[y][m]||[]).push(e); });
+  const newest=new Date(all[0].t), cur=all.find(e=>e.id===HIST_CUR), curD=cur&&new Date(cur.t);
+  const isOpen=(y,m)=>(y==newest.getFullYear()&&(m===undefined||m==newest.getMonth()))||(curD&&y==curD.getFullYear()&&(m===undefined||m==curD.getMonth()));
+  const item=e=>{
     const d=new Date(e.t), cards=e.c.filter(r=>byId(r.id)).map(r=>byId(r.id).name+(r.rev?" (omg.)":""));
     return `<li class="${e.id===HIST_CUR?"cur":""}"><div class="hi">
-      <b>${e.q?esc(e.q):"Zonder vraag"}</b>
-      <small>${d.toLocaleDateString("nl-NL",{day:"numeric",month:"long",year:"numeric"})} ${d.toLocaleTimeString("nl-NL",{hour:"2-digit",minute:"2-digit"})} · ${SPREADS[e.s]?SPREADS[e.s].name.split(" — ")[0]:"Vrije legging"}${e.ai.length?" · ✨ AI-uitleg":""}</small>
+      <b>${e.q?esc(e.q):"Zonder vraag"} (${d.toLocaleTimeString("nl-NL",{hour:"2-digit",minute:"2-digit"})})</b>
+      <small>${d.toLocaleDateString("nl-NL",{weekday:"short",day:"numeric",month:"long"})} · ${SPREADS[e.s]?SPREADS[e.s].name.split(" — ")[0]:"Vrije legging"}${e.ai.length?" · ✨ AI-uitleg":""}</small>
       <small>${esc(cards.join(", "))}</small></div>
       <div class="hb"><button class="primary" onclick="histOpen(${e.id})">Teruglezen</button><button onclick="histDelete(${e.id})" aria-label="Verwijder deze legging">Verwijder</button></div></li>`;
-  }).join("") : `<li class="muted">Nog geen leggingen bewaard. Laat een legging uitleggen en hij verschijnt hier.</li>`;
+  };
+  const byDesc=o=>Object.keys(o).sort((a,b)=>b-a);
+  $("#histList").innerHTML = byDesc(tree).map(y=>`<details class="hf"${isOpen(y)?" open":""}><summary>📁 ${y}</summary>${
+    byDesc(tree[y]).map(m=>`<details class="hf"${isOpen(y,m)?" open":""}><summary>📁 ${new Date(y,m).toLocaleDateString("nl-NL",{month:"long"})} <span class="muted">(${tree[y][m].length})</span></summary><ul class="hist">${tree[y][m].map(item).join("")}</ul></details>`).join("")
+  }</details>`).join("");
 }
 function histOpen(id){
   const e=histAll().find(x=>x.id===id); if(!e) return;
